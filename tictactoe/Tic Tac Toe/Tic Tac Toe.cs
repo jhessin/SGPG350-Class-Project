@@ -309,7 +309,7 @@ namespace Tic_Tac_Toe
 
 	    private void radO_CheckedChanged(object sender, EventArgs e)
 	    {
-			Trace.TraceInformation("Player set to O");
+			Trace.TraceInformation("Player set to " + (radX.Checked?"X": "O"));
 			// if O is checked, force the connection socket to 34
 			// not required, but guarentees that X and O players are not using the same socket to play
 			txtConnectPort.Text = "34";
@@ -318,7 +318,7 @@ namespace Tic_Tac_Toe
 
 	    private void radX_CheckedChanged(object sender, EventArgs e)
 		{
-			Trace.TraceInformation("Player set to X");
+			Trace.TraceInformation("Player set to " + (radX.Checked?"X": "O"));
 		}
 	}
 }

@@ -45,6 +45,7 @@ namespace Tic_Tac_Toe
 			this.txtConnectPort = new System.Windows.Forms.TextBox();
 			this.lblMessage = new System.Windows.Forms.Label();
 			this.btnDisconnect = new System.Windows.Forms.Button();
+			this.listenThread = new System.ComponentModel.BackgroundWorker();
 			this.SuspendLayout();
 			// 
 			// lblUpperLeft
@@ -256,6 +257,13 @@ namespace Tic_Tac_Toe
 			this.btnDisconnect.UseVisualStyleBackColor = true;
 			this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
 			// 
+			// listenThread
+			// 
+			this.listenThread.WorkerReportsProgress = true;
+			this.listenThread.WorkerSupportsCancellation = true;
+			this.listenThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.Listen);
+			this.listenThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.UpdateProgress);
+			// 
 			// TicTacToeWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -306,6 +314,7 @@ namespace Tic_Tac_Toe
         private System.Windows.Forms.TextBox txtConnectPort;
         private System.Windows.Forms.Label lblMessage;
         private System.Windows.Forms.Button btnDisconnect;
-    }
+		private System.ComponentModel.BackgroundWorker listenThread;
+	}
 }
 

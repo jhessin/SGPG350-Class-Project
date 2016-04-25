@@ -32,9 +32,12 @@
 			this.txtClient1Port = new System.Windows.Forms.TextBox();
 			this.lblClient1Port = new System.Windows.Forms.Label();
 			this.txtClient2Port = new System.Windows.Forms.TextBox();
-			this.lblMessage = new System.Windows.Forms.Label();
+			this.lblMessage1 = new System.Windows.Forms.Label();
 			this.lblClient2Port = new System.Windows.Forms.Label();
 			this.btnDisconnect = new System.Windows.Forms.Button();
+			this.client1 = new System.ComponentModel.BackgroundWorker();
+			this.client2 = new System.ComponentModel.BackgroundWorker();
+			this.lblMessage2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// btnStartListening
@@ -75,15 +78,15 @@
 			this.txtClient2Port.Text = "34";
 			this.txtClient2Port.TextChanged += new System.EventHandler(this.txtClient2Port_TextChanged);
 			// 
-			// lblMessage
+			// lblMessage1
 			// 
-			this.lblMessage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-			this.lblMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblMessage.Location = new System.Drawing.Point(15, 242);
-			this.lblMessage.Name = "lblMessage";
-			this.lblMessage.Size = new System.Drawing.Size(250, 23);
-			this.lblMessage.TabIndex = 9;
-			this.lblMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.lblMessage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+			this.lblMessage1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblMessage1.Location = new System.Drawing.Point(15, 242);
+			this.lblMessage1.Name = "lblMessage1";
+			this.lblMessage1.Size = new System.Drawing.Size(250, 23);
+			this.lblMessage1.TabIndex = 9;
+			this.lblMessage1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// lblClient2Port
 			// 
@@ -105,14 +108,41 @@
 			this.btnDisconnect.UseVisualStyleBackColor = true;
 			this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
 			// 
+			// client1
+			// 
+			this.client1.WorkerReportsProgress = true;
+			this.client1.WorkerSupportsCancellation = true;
+			this.client1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ListenToClient);
+			this.client1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.ProgressChanged);
+			this.client1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.WorkerCompleted);
+			// 
+			// client2
+			// 
+			this.client2.WorkerReportsProgress = true;
+			this.client2.WorkerSupportsCancellation = true;
+			this.client2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ListenToClient);
+			this.client2.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.ProgressChanged);
+			this.client2.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.WorkerCompleted);
+			// 
+			// lblMessage2
+			// 
+			this.lblMessage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+			this.lblMessage2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblMessage2.Location = new System.Drawing.Point(15, 276);
+			this.lblMessage2.Name = "lblMessage2";
+			this.lblMessage2.Size = new System.Drawing.Size(250, 23);
+			this.lblMessage2.TabIndex = 12;
+			this.lblMessage2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
 			// ServerWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(298, 274);
+			this.ClientSize = new System.Drawing.Size(298, 313);
+			this.Controls.Add(this.lblMessage2);
 			this.Controls.Add(this.btnDisconnect);
 			this.Controls.Add(this.lblClient2Port);
-			this.Controls.Add(this.lblMessage);
+			this.Controls.Add(this.lblMessage1);
 			this.Controls.Add(this.txtClient2Port);
 			this.Controls.Add(this.txtClient1Port);
 			this.Controls.Add(this.lblClient1Port);
@@ -130,9 +160,12 @@
         private System.Windows.Forms.TextBox txtClient1Port;
         private System.Windows.Forms.Label lblClient1Port;
         private System.Windows.Forms.TextBox txtClient2Port;
-        private System.Windows.Forms.Label lblMessage;
+        private System.Windows.Forms.Label lblMessage1;
         private System.Windows.Forms.Label lblClient2Port;
         private System.Windows.Forms.Button btnDisconnect;
-    }
+		private System.ComponentModel.BackgroundWorker client1;
+		private System.ComponentModel.BackgroundWorker client2;
+		private System.Windows.Forms.Label lblMessage2;
+	}
 }
 

@@ -62,18 +62,32 @@ namespace ServerTicTacToe
 					    if (worker.CancellationPending)
 					    {
 							e.Cancel = true;
+						    if (isClient1)
+						    {
+							    _c1Reader?.Close();
+							    _c1Writer?.Close();
+							    _c1NetStream?.Close();
+						    }
+						    else
+						    {
+							    _c2Reader?.Close();
+								_c2Writer?.Close();
+								_c2NetStream?.Close();
+						    }
 						    break;
 					    }
 
 				        // create the _c1NetStream and c1Reader and _c1Writer
 					    if (isClient1)
 					    {
+							_c1Listener?.Stop();
 						    _c1NetStream = socketForClient.GetStream();
 							_c1Reader = new StreamReader(_c1NetStream);
 							_c1Writer = new StreamWriter(_c1NetStream);
 					    }
 					    else
 					    {
+							_c2Listener?.Stop();
 						    _c2NetStream = socketForClient.GetStream();
 							_c2Reader = new StreamReader(_c2NetStream);
 							_c2Writer = new StreamWriter(_c2NetStream);
@@ -87,7 +101,6 @@ namespace ServerTicTacToe
 					    result = isClient1 ? _c1Reader.ReadLine() : _c2Reader.ReadLine();
 
 				        // pass information received from port for client 1 to port for client 2 (using _c2Writer)
-					    MessageBox.Show(result); // FOR DEBUGGING
 						worker.ReportProgress(0, "Message Recieved: " + result);
 
 					    if (isClient1)
@@ -168,18 +181,8 @@ namespace ServerTicTacToe
             // make sure you uncomment the below code to release resources
 
             client1.CancelAsync();
-            _c1Listener.Stop();
-			_c1NetStream?.Close();
-			_c1Reader?.Close();
-			_c1Writer?.Close();
 
 			client2.CancelAsync();
-            _c2Listener.Stop();
-			_c1NetStream?.Close();
-			_c1Reader?.Close();
-			_c1Writer?.Close();
-
-			Application.Exit();
         }
 
 		private void txtClient1Port_TextChanged(object sender, EventArgs e)

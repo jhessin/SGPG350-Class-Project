@@ -38,6 +38,7 @@
 			this.client1 = new System.ComponentModel.BackgroundWorker();
 			this.client2 = new System.ComponentModel.BackgroundWorker();
 			this.lblMessage2 = new System.Windows.Forms.Label();
+			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.SuspendLayout();
 			// 
 			// btnStartListening
@@ -166,6 +167,7 @@
 		private System.ComponentModel.BackgroundWorker client1;
 		private System.ComponentModel.BackgroundWorker client2;
 		private System.Windows.Forms.Label lblMessage2;
+		private System.ComponentModel.BackgroundWorker backgroundWorker1;
 	}
 }
 

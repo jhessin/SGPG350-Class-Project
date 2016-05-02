@@ -21,6 +21,7 @@ namespace Tic_Tac_Toe
 {
 	public partial class TicTacToeWindow : Form
 	{
+		private const string RESTART_REQUEST = "Restart";
 		private bool _boolPlayerTurn = true; // declare a variable for players turn
 		private bool _bWeHaveAWinner;
 		private TcpClient _client;
@@ -58,13 +59,29 @@ namespace Tic_Tac_Toe
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			InitializeBoard();
+			StartGame();
 
-			if (radO.Checked)
+			// Send restart request
+			_writer?.WriteLine(RESTART_REQUEST);
+			_writer?.Flush();
+
+		}
+
+		private void StartGame()
+		{
+			InitializeBoard();
+if (radO.Checked)
 			{
+				_boolPlayerTurn = false;
+				lblMessage.Text = "Waiting for player X";
 				// listen to server to indicate whether or not X made his move
 				// send received information to MakeMove to have it display the proper symbol, then wait for player to make his/her move
+				if (!listenThread.IsBusy)
+				{
+					listenThread.RunWorkerAsync();
+				}
 			}
+
 		}
 
 		private void InitializeBoard()
@@ -84,6 +101,11 @@ namespace Tic_Tac_Toe
 		// Places X or O in the label passed to it
 		private void UpdateLabel(Label lbl)
 		{
+			if (!_boolPlayerTurn || _client == null )
+			{
+				return;
+			}
+
 			if (radX.Checked)
 			{
 				lbl.Text = "X";
@@ -219,18 +241,23 @@ namespace Tic_Tac_Toe
 
 		private void btnConnect_Click(object sender, EventArgs e)
 		{
-			// setup connections, sockets, streamreader and streamwriter here
-			if (_client == null)
+			try
 			{
-				_client = new TcpClient("localhost", int.Parse(txtConnectPort.Text));
-				_netStream = _client.GetStream();
-				_reader = new StreamReader(_netStream);
-				_writer = new StreamWriter(_netStream);
-
-				if (!listenThread.IsBusy)
+				// setup connections, sockets, streamreader and streamwriter here
+				if (_client == null)
 				{
-					listenThread.RunWorkerAsync();
+					_client = new TcpClient("localhost", int.Parse(txtConnectPort.Text));
+					_netStream = _client.GetStream();
+					_reader = new StreamReader(_netStream);
+					_writer = new StreamWriter(_netStream);
+					btnStart.Enabled = true;
+					StartGame();
 				}
+			}
+			catch (Exception exception)
+			{
+				Trace.TraceError(exception.Message);
+				lblMessage.Text = exception.Message;
 			}
 		}
 
@@ -241,16 +268,25 @@ namespace Tic_Tac_Toe
 			_writer?.Close();
 			_netStream?.Close();
 			_client?.Close();
+			btnStart.Enabled = false;
 			Application.Exit();
 		}
 
 		private void SendInfo(int x, int y, string playerSymbol)
 		{
+			if (!_boolPlayerTurn || _client == null)
+			{
+				return;
+			}
 			// send information to server
 			_writer?.WriteLine("" + x + "," + y);
 
 			// Flush information
 			_writer?.Flush();
+
+			// End player's turn.
+			_boolPlayerTurn = false;
+			lblMessage.Text = "Waiting for other player";
 
 			// Listen for a response from the server. Assign response received to response variable
 			if (!listenThread.IsBusy)
@@ -346,7 +382,14 @@ namespace Tic_Tac_Toe
 
 		private void Listen(object sender, System.ComponentModel.DoWorkEventArgs e)
 		{
-			listenThread.ReportProgress(0, _reader?.ReadLine());
+			try
+			{
+				listenThread.ReportProgress(0, _reader?.ReadLine());
+			}
+			catch (Exception exception)
+			{
+				Trace.TraceError(exception.Message);
+			}
 		}
 
 		private void UpdateProgress(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -354,7 +397,18 @@ namespace Tic_Tac_Toe
 			string response = (string)e.UserState;
 			lblMessage.Text = "Message recieved:" + response;
 			if (response != "")
-				MakeMove(response);
+			{
+				if (response == RESTART_REQUEST)
+				{
+					StartGame();
+				}
+				else
+				{
+					MakeMove(response);
+					_boolPlayerTurn = true;
+					lblMessage.Text = "Your turn.";
+				}
+			}
 		}
 	}
 }

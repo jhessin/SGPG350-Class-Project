@@ -176,23 +176,26 @@ namespace Tic_Tac_Toe
 			// 
 			// btnStart
 			// 
+			this.btnStart.Enabled = false;
 			this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.btnStart.Location = new System.Drawing.Point(110, 361);
 			this.btnStart.Name = "btnStart";
 			this.btnStart.Size = new System.Drawing.Size(100, 35);
 			this.btnStart.TabIndex = 9;
-			this.btnStart.Text = "Start";
+			this.btnStart.Text = "Restart";
 			this.btnStart.UseVisualStyleBackColor = true;
 			this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
 			// 
 			// radX
 			// 
 			this.radX.AutoSize = true;
+			this.radX.Checked = true;
 			this.radX.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.radX.Location = new System.Drawing.Point(42, 331);
 			this.radX.Name = "radX";
 			this.radX.Size = new System.Drawing.Size(39, 24);
 			this.radX.TabIndex = 15;
+			this.radX.TabStop = true;
 			this.radX.Text = "X";
 			this.radX.UseVisualStyleBackColor = true;
 			this.radX.CheckedChanged += new System.EventHandler(this.radX_CheckedChanged);

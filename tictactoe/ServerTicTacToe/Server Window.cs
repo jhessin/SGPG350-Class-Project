@@ -127,40 +127,6 @@ namespace ServerTicTacToe
 			}
 		}
 
-		private void ListenToClient1(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            
-        }
-
-		private void ListenToClient2(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            try
-            {
-                // get IP address of server
-
-                // assign IP address to listener (_c2Listener)
-
-                // start _c2Listener
-
-                // if new connection received, accept it
-                //if (socketForClient.Connected)
-                //{
-                //    while (true)
-                //    {
-                //        // create the _c1NetStream and c1Reader and _c1Writer
-
-                //        // listen to information recevied from port assigned to client 2
-
-                //        // pass information received from port for client 2 to port for client 1 (using _c1Writer)
-                //    }
-                //}
-            }
-            catch
-            {
-                //MessageBox.Show(ex.Message + " _ Thread 1");
-            }
-        }
-
 		private void startListening_Click(object sender, EventArgs e)
 		{
 			// Instantiate client 1 and client 2 threads. Assign ListenToClient1 to thread 1 and ListenToClient2 to thread 2

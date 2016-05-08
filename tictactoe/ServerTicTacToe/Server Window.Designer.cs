@@ -38,7 +38,6 @@
 			this.client1 = new System.ComponentModel.BackgroundWorker();
 			this.client2 = new System.ComponentModel.BackgroundWorker();
 			this.lblMessage2 = new System.Windows.Forms.Label();
-			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.SuspendLayout();
 			// 
 			// btnStartListening
@@ -79,7 +78,7 @@
 			this.txtClient2Port.Text = "34";
 			this.txtClient2Port.TextChanged += new System.EventHandler(this.txtClient2Port_TextChanged);
 			// 
-			// lblMessage1
+			// Msg1
 			// 
 			this.lblMessage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblMessage1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -125,7 +124,7 @@
 			this.client2.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.ProgressChanged);
 			this.client2.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.WorkerCompleted);
 			// 
-			// lblMessage2
+			// Msg2
 			// 
 			this.lblMessage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblMessage2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -167,7 +166,6 @@
 		private System.ComponentModel.BackgroundWorker client1;
 		private System.ComponentModel.BackgroundWorker client2;
 		private System.Windows.Forms.Label lblMessage2;
-		private System.ComponentModel.BackgroundWorker backgroundWorker1;
 	}
 }
 

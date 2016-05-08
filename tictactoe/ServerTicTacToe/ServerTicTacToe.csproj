@@ -76,6 +76,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server.cs" />
     <EmbeddedResource Include="Server Window.resx">
       <DependentUpon>Server Window.cs</DependentUpon>
       <SubType>Designer</SubType>

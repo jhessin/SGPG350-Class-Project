@@ -46,6 +46,13 @@ namespace Tic_Tac_Toe
 			this.lblMessage = new System.Windows.Forms.Label();
 			this.btnDisconnect = new System.Windows.Forms.Button();
 			this.listenThread = new System.ComponentModel.BackgroundWorker();
+			this.File = new System.Windows.Forms.MenuStrip();
+			this.Reset = new System.Windows.Forms.ToolStripMenuItem();
+			this.resetGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.File.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// lblUpperLeft
@@ -53,7 +60,7 @@ namespace Tic_Tac_Toe
 			this.lblUpperLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblUpperLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.lblUpperLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblUpperLeft.Location = new System.Drawing.Point(0, 0);
+			this.lblUpperLeft.Location = new System.Drawing.Point(-1, 29);
 			this.lblUpperLeft.Margin = new System.Windows.Forms.Padding(5);
 			this.lblUpperLeft.Name = "lblUpperLeft";
 			this.lblUpperLeft.Size = new System.Drawing.Size(100, 100);
@@ -67,7 +74,7 @@ namespace Tic_Tac_Toe
 			this.lblUpperMiddle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblUpperMiddle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.lblUpperMiddle.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblUpperMiddle.Location = new System.Drawing.Point(110, 0);
+			this.lblUpperMiddle.Location = new System.Drawing.Point(109, 29);
 			this.lblUpperMiddle.Margin = new System.Windows.Forms.Padding(5);
 			this.lblUpperMiddle.Name = "lblUpperMiddle";
 			this.lblUpperMiddle.Size = new System.Drawing.Size(100, 100);
@@ -81,7 +88,7 @@ namespace Tic_Tac_Toe
 			this.lblUpperRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblUpperRight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.lblUpperRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblUpperRight.Location = new System.Drawing.Point(220, 0);
+			this.lblUpperRight.Location = new System.Drawing.Point(219, 29);
 			this.lblUpperRight.Margin = new System.Windows.Forms.Padding(5);
 			this.lblUpperRight.Name = "lblUpperRight";
 			this.lblUpperRight.Size = new System.Drawing.Size(100, 100);
@@ -95,7 +102,7 @@ namespace Tic_Tac_Toe
 			this.lblLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.lblLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblLeft.Location = new System.Drawing.Point(0, 110);
+			this.lblLeft.Location = new System.Drawing.Point(-1, 139);
 			this.lblLeft.Margin = new System.Windows.Forms.Padding(5);
 			this.lblLeft.Name = "lblLeft";
 			this.lblLeft.Size = new System.Drawing.Size(100, 100);
@@ -109,7 +116,7 @@ namespace Tic_Tac_Toe
 			this.lblMiddle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblMiddle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.lblMiddle.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblMiddle.Location = new System.Drawing.Point(110, 110);
+			this.lblMiddle.Location = new System.Drawing.Point(109, 139);
 			this.lblMiddle.Margin = new System.Windows.Forms.Padding(5);
 			this.lblMiddle.Name = "lblMiddle";
 			this.lblMiddle.Size = new System.Drawing.Size(100, 100);
@@ -123,7 +130,7 @@ namespace Tic_Tac_Toe
 			this.lblRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblRight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.lblRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblRight.Location = new System.Drawing.Point(220, 110);
+			this.lblRight.Location = new System.Drawing.Point(219, 139);
 			this.lblRight.Margin = new System.Windows.Forms.Padding(5);
 			this.lblRight.Name = "lblRight";
 			this.lblRight.Size = new System.Drawing.Size(100, 100);
@@ -137,7 +144,7 @@ namespace Tic_Tac_Toe
 			this.lblLowerLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblLowerLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.lblLowerLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblLowerLeft.Location = new System.Drawing.Point(0, 220);
+			this.lblLowerLeft.Location = new System.Drawing.Point(-1, 249);
 			this.lblLowerLeft.Margin = new System.Windows.Forms.Padding(5);
 			this.lblLowerLeft.Name = "lblLowerLeft";
 			this.lblLowerLeft.Size = new System.Drawing.Size(100, 100);
@@ -151,7 +158,7 @@ namespace Tic_Tac_Toe
 			this.lblLowerMiddle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblLowerMiddle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.lblLowerMiddle.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblLowerMiddle.Location = new System.Drawing.Point(110, 220);
+			this.lblLowerMiddle.Location = new System.Drawing.Point(109, 249);
 			this.lblLowerMiddle.Margin = new System.Windows.Forms.Padding(5);
 			this.lblLowerMiddle.Name = "lblLowerMiddle";
 			this.lblLowerMiddle.Size = new System.Drawing.Size(100, 100);
@@ -165,7 +172,7 @@ namespace Tic_Tac_Toe
 			this.lblLowerRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblLowerRight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.lblLowerRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblLowerRight.Location = new System.Drawing.Point(220, 220);
+			this.lblLowerRight.Location = new System.Drawing.Point(219, 249);
 			this.lblLowerRight.Margin = new System.Windows.Forms.Padding(5);
 			this.lblLowerRight.Name = "lblLowerRight";
 			this.lblLowerRight.Size = new System.Drawing.Size(100, 100);
@@ -178,7 +185,7 @@ namespace Tic_Tac_Toe
 			// 
 			this.btnStart.Enabled = false;
 			this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnStart.Location = new System.Drawing.Point(110, 361);
+			this.btnStart.Location = new System.Drawing.Point(109, 390);
 			this.btnStart.Name = "btnStart";
 			this.btnStart.Size = new System.Drawing.Size(100, 35);
 			this.btnStart.TabIndex = 9;
@@ -191,7 +198,7 @@ namespace Tic_Tac_Toe
 			this.radX.AutoSize = true;
 			this.radX.Checked = true;
 			this.radX.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.radX.Location = new System.Drawing.Point(42, 331);
+			this.radX.Location = new System.Drawing.Point(41, 360);
 			this.radX.Name = "radX";
 			this.radX.Size = new System.Drawing.Size(39, 24);
 			this.radX.TabIndex = 15;
@@ -204,7 +211,7 @@ namespace Tic_Tac_Toe
 			// 
 			this.radO.AutoSize = true;
 			this.radO.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.radO.Location = new System.Drawing.Point(215, 330);
+			this.radO.Location = new System.Drawing.Point(214, 359);
 			this.radO.Name = "radO";
 			this.radO.Size = new System.Drawing.Size(40, 24);
 			this.radO.TabIndex = 16;
@@ -214,7 +221,7 @@ namespace Tic_Tac_Toe
 			// 
 			// btnConnect
 			// 
-			this.btnConnect.Location = new System.Drawing.Point(151, 409);
+			this.btnConnect.Location = new System.Drawing.Point(150, 438);
 			this.btnConnect.Name = "btnConnect";
 			this.btnConnect.Size = new System.Drawing.Size(76, 35);
 			this.btnConnect.TabIndex = 17;
@@ -225,7 +232,7 @@ namespace Tic_Tac_Toe
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(2, 419);
+			this.label1.Location = new System.Drawing.Point(1, 448);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(77, 13);
 			this.label1.TabIndex = 18;
@@ -233,7 +240,7 @@ namespace Tic_Tac_Toe
 			// 
 			// txtConnectPort
 			// 
-			this.txtConnectPort.Location = new System.Drawing.Point(85, 417);
+			this.txtConnectPort.Location = new System.Drawing.Point(84, 446);
 			this.txtConnectPort.Name = "txtConnectPort";
 			this.txtConnectPort.Size = new System.Drawing.Size(43, 20);
 			this.txtConnectPort.TabIndex = 19;
@@ -244,7 +251,7 @@ namespace Tic_Tac_Toe
 			this.lblMessage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.lblMessage.Cursor = System.Windows.Forms.Cursors.AppStarting;
 			this.lblMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblMessage.Location = new System.Drawing.Point(5, 456);
+			this.lblMessage.Location = new System.Drawing.Point(4, 485);
 			this.lblMessage.Name = "lblMessage";
 			this.lblMessage.Size = new System.Drawing.Size(315, 23);
 			this.lblMessage.TabIndex = 20;
@@ -252,7 +259,7 @@ namespace Tic_Tac_Toe
 			// 
 			// btnDisconnect
 			// 
-			this.btnDisconnect.Location = new System.Drawing.Point(234, 409);
+			this.btnDisconnect.Location = new System.Drawing.Point(233, 438);
 			this.btnDisconnect.Name = "btnDisconnect";
 			this.btnDisconnect.Size = new System.Drawing.Size(75, 35);
 			this.btnDisconnect.TabIndex = 21;
@@ -267,12 +274,59 @@ namespace Tic_Tac_Toe
 			this.listenThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.Listen);
 			this.listenThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.UpdateProgress);
 			// 
+			// File
+			// 
+			this.File.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Reset});
+			this.File.Location = new System.Drawing.Point(0, 0);
+			this.File.Name = "File";
+			this.File.Size = new System.Drawing.Size(321, 24);
+			this.File.TabIndex = 22;
+			this.File.Text = "menuStrip1";
+			// 
+			// Reset
+			// 
+			this.Reset.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.connectToolStripMenuItem,
+            this.resetGameToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.exitToolStripMenuItem});
+			this.Reset.Name = "Reset";
+			this.Reset.Size = new System.Drawing.Size(37, 20);
+			this.Reset.Text = "&File";
+			// 
+			// resetGameToolStripMenuItem
+			// 
+			this.resetGameToolStripMenuItem.Name = "resetGameToolStripMenuItem";
+			this.resetGameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.resetGameToolStripMenuItem.Text = "&Reset Game";
+			this.resetGameToolStripMenuItem.Click += new System.EventHandler(this.btnStart_Click);
+			// 
+			// exitToolStripMenuItem
+			// 
+			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.exitToolStripMenuItem.Text = "E&xit";
+			this.exitToolStripMenuItem.Click += new System.EventHandler(this.btnDisconnect_Click);
+			// 
+			// connectToolStripMenuItem
+			// 
+			this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
+			this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.connectToolStripMenuItem.Text = "&Connect";
+			this.connectToolStripMenuItem.Click += new System.EventHandler(this.btnConnect_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+			// 
 			// TicTacToeWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-			this.ClientSize = new System.Drawing.Size(321, 482);
+			this.ClientSize = new System.Drawing.Size(321, 516);
 			this.Controls.Add(this.btnDisconnect);
 			this.Controls.Add(this.lblMessage);
 			this.Controls.Add(this.txtConnectPort);
@@ -290,9 +344,13 @@ namespace Tic_Tac_Toe
 			this.Controls.Add(this.lblUpperRight);
 			this.Controls.Add(this.lblUpperMiddle);
 			this.Controls.Add(this.lblUpperLeft);
+			this.Controls.Add(this.File);
+			this.MainMenuStrip = this.File;
 			this.Name = "TicTacToeWindow";
 			this.Text = "Tic Tac Toe";
 			this.Load += new System.EventHandler(this.Form1_Load);
+			this.File.ResumeLayout(false);
+			this.File.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -318,6 +376,12 @@ namespace Tic_Tac_Toe
         private System.Windows.Forms.Label lblMessage;
         private System.Windows.Forms.Button btnDisconnect;
 		private System.ComponentModel.BackgroundWorker listenThread;
+		private System.Windows.Forms.MenuStrip File;
+		private System.Windows.Forms.ToolStripMenuItem Reset;
+		private System.Windows.Forms.ToolStripMenuItem resetGameToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 	}
 }
 

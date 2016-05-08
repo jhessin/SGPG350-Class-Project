@@ -11,6 +11,7 @@
 // =========================================================
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -40,15 +41,17 @@ namespace Tic_Tac_Toe
 			Graphics g = e.Graphics;
 			Pen myPen = new Pen(Color.Black, 10);
 			//This will draw my Tic Tac Toe Board
-			g.DrawLine(myPen, 0, 105, 320, 105);
-			g.DrawLine(myPen, 0, 215, 320, 215);
-			g.DrawLine(myPen, 105, 0, 105, 320);
-			g.DrawLine(myPen, 215, 0, 215, 320);
+			g.DrawLine(myPen, 0, 135, 320, 135);
+			g.DrawLine(myPen, 0, 245, 320, 245);
+			g.DrawLine(myPen, 105, 30, 105, 350);
+			g.DrawLine(myPen, 215, 30, 215, 350);
 			base.OnPaint(e);
 		}
 
 		private void btnQuit_Click(object sender, EventArgs e)
 		{
+			listenThread.CancelAsync();
+			Application.Exit();
 		}
 
 		private void ResetLabel(Label lbl)
@@ -64,13 +67,12 @@ namespace Tic_Tac_Toe
 			// Send restart request
 			_writer?.WriteLine(RESTART_REQUEST);
 			_writer?.Flush();
-
 		}
 
 		private void StartGame()
 		{
 			InitializeBoard();
-if (radO.Checked)
+			if (radO.Checked)
 			{
 				_boolPlayerTurn = false;
 				lblMessage.Text = "Waiting for player X";
@@ -81,7 +83,6 @@ if (radO.Checked)
 					listenThread.RunWorkerAsync();
 				}
 			}
-
 		}
 
 		private void InitializeBoard()
@@ -101,7 +102,7 @@ if (radO.Checked)
 		// Places X or O in the label passed to it
 		private void UpdateLabel(Label lbl)
 		{
-			if (!_boolPlayerTurn || _client == null )
+			if (!_boolPlayerTurn || _client == null)
 			{
 				return;
 			}
@@ -380,7 +381,7 @@ if (radO.Checked)
 			Trace.TraceInformation("Player set to " + (radX.Checked ? "X" : "O"));
 		}
 
-		private void Listen(object sender, System.ComponentModel.DoWorkEventArgs e)
+		private void Listen(object sender, DoWorkEventArgs e)
 		{
 			try
 			{
@@ -392,9 +393,9 @@ if (radO.Checked)
 			}
 		}
 
-		private void UpdateProgress(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+		private void UpdateProgress(object sender, ProgressChangedEventArgs e)
 		{
-			string response = (string)e.UserState;
+			string response = (string) e.UserState;
 			lblMessage.Text = "Message recieved:" + response;
 			if (response != "")
 			{

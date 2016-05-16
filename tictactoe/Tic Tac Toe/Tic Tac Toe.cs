@@ -17,6 +17,7 @@ using System.Drawing;
 using System.IO;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using ServerTicTacToe;
 
 namespace Tic_Tac_Toe
 {
@@ -29,6 +30,7 @@ namespace Tic_Tac_Toe
 		private NetworkStream _netStream;
 		private StreamReader _reader;
 		private StreamWriter _writer;
+		private Game _game;
 
 		public TicTacToeWindow()
 		{
@@ -118,7 +120,7 @@ namespace Tic_Tac_Toe
 			lbl.Enabled = false;
 			if (CheckWin())
 			{
-				CheckWin();
+				_bWeHaveAWinner = true;
 			}
 		}
 

@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace ServerTicTacToe
@@ -29,41 +30,134 @@ namespace ServerTicTacToe
 	public class Server
 	{
 		// Network variables
-		private TcpListener _c1Listener;
-		private NetworkStream _c1NetStream;
-		private StreamReader _c1Reader;
-		private StreamWriter _c1Writer;
+		private TcpListener _listener;
+		private NetworkStream _netStream;
+		private StreamReader _reader;
+		private StreamWriter _writer;
 
-		private TcpListener _c2Listener;
-		private NetworkStream _c2NetStream;
-		private StreamReader _c2Reader;
-		private StreamWriter _c2Writer;
+		// The ports used to differentiate between clients
+		private int _port1 = 0;
+		private int _port2 = 0;
+		private TcpClient _client1;
+		private TcpClient _client2;
 
 		// Client threads
-		private readonly BackgroundWorker client1;
-		private readonly BackgroundWorker client2;
+		private BackgroundWorker _connectionListener;
+		private BackgroundWorker _msgListener;
+		private bool _client1Connected;
+		private bool _client2Connected;
+
+		// Is the server active
+		public bool Active { get; private set; }
 
 		public Server()
 		{
 			Active = false;
 
-			client1 = new BackgroundWorker();
-			client2 = new BackgroundWorker();
+			_msgListener.DoWork += Listen;
+			_msgListener.ProgressChanged += GetMessage;
 
-			client1.DoWork += ListenToClient;
-			client1.ProgressChanged += ProgressChanged;
-			client1.RunWorkerCompleted += RunWorkerCompleted;
-
-			client2.DoWork += ListenToClient;
-			client2.ProgressChanged += ProgressChanged;
-			client2.RunWorkerCompleted += RunWorkerCompleted;
+			_connectionListener.DoWork += Connect;
+			_connectionListener.RunWorkerCompleted += Connected;
 		}
 
-		// Is the server active
-		public bool Active { get; private set; }
+		private void Connect(object sender, DoWorkEventArgs e)
+		{
+			int port = (int) e.Argument;
+			TcpListener listener = new TcpListener(IPAddress.Any, port);
+			if (port == _port1)
+			{
+				e.Result = _client1 = listener.AcceptTcpClient();
+			}
+			else if (port == _port2)
+			{
+				e.Result = _client2 = listener.AcceptTcpClient();
+			}
+			else
+			{
+				e.Result = listener.AcceptTcpClient();
+			}
+		}
 
-		// The port to connect to.
-		public int ConnectionPort { private get; set; }
+		private void Connected(object sender, RunWorkerCompletedEventArgs e)
+		{
+
+			// Runs after a connection is established.
+			if (_port1 == 0)
+			{
+				_client1 = (TcpClient) e.Result;
+				_port1 = GetFreePort();
+				SendToClient(_client1, _port1);
+				_client1.Close();
+				_client1 = null;
+				_listener.Stop();
+				_listener = new TcpListener(IPAddress.Any, _port1);
+				_listener.Start();
+				_connectionListener.RunWorkerAsync(_port1);
+				return;
+			}
+			if (_port2 == 0)
+			{
+				_port2 = GetFreePort();
+				SendToClient(_client2, _port2);
+				_client2.Close();
+				_client2 = null;
+				_listener.Stop();
+				_listener = new TcpListener(IPAddress.Any, _port2);
+				_listener.Start();
+				_connectionListener.RunWorkerAsync(_port2);
+				return;
+			}
+		}
+
+		private void SendToClient(TcpClient client, object msg)
+		{
+			NetworkStream stream = client.GetStream();
+			StreamWriter writer = new StreamWriter(stream);
+
+			writer.Write(msg);
+			writer.Flush();
+			writer.Close();
+			stream.Close();
+		}
+
+		private void Listen(object sender, DoWorkEventArgs e)
+		{
+			int port = (int) e.Argument;
+			TcpClient client = port == _port1 ? _client1 : _client2;
+			StreamReader reader = new StreamReader(client.GetStream());
+			_msgListener.ReportProgress(port, reader.ReadLine());
+		}
+
+		private void GetMessage(object sender, ProgressChangedEventArgs e)
+		{
+
+			string msg = (string) e.UserState;
+			ReadMessage(e.ProgressPercentage, msg);
+		}
+
+		private void ReadMessage(int port, string msg)
+		{
+			TcpClient client = port == _port1 ? _client1 : _client2;
+
+			// Interpret the message
+			string cmd = msg.Substring(0, 4);
+
+			switch (cmd)
+			{
+				case "smbl":
+					// Send the client's appropriate symbol.
+					break;
+				case "turn":
+					// Send "X" or "O" to signify who's turn it is.
+					break;
+				case "move":
+					// Read the move string and make the appropriate adjustments to the game board.
+					// Send the gameboard to each client - forcing a redraw.
+					break;
+			}
+		}
+
 
 		// Message boxes for output
 		public Label Msg1 { private get; set; }
@@ -78,20 +172,30 @@ namespace ServerTicTacToe
 			return port;
 		}
 
-		public void Start()
+		public void Start(int port)
 		{
-			client1.RunWorkerAsync();
+			if (Active)
+			{
+				return;
+			}
+
 			Active = true;
+
+			_listener = new TcpListener(IPAddress.Any, port);
+			_listener.Start();
+
+
+//			client1.RunWorkerAsync();
 //			client2.RunWorkerAsync();
 		}
 
 		public void Stop()
 		{
-			client1.CancelAsync();
-			client2.CancelAsync();
+//			client1.CancelAsync();
+//			client2.CancelAsync();
 		}
 
-		private void ListenToClient(object sender, DoWorkEventArgs e)
+/*		private void ListenToClient(object sender, DoWorkEventArgs e)
 		{
 			bool isClient1 = sender == client1;
 			BackgroundWorker worker = (BackgroundWorker) sender;
@@ -104,13 +208,13 @@ namespace ServerTicTacToe
 				host = new IPEndPoint(IPAddress.Any, ConnectionPort);
 
 
-				// assign IP address to listener (_c1Listener)
+				// assign IP address to listener (_listener)
 				if (isClient1)
 				{
-					_c1Listener = new TcpListener(host);
+					_listener = new TcpListener(host);
 
-					// start _c1Listener
-					_c1Listener.Start();
+					// start _listener
+					_listener.Start();
 				}
 				else
 				{
@@ -121,15 +225,15 @@ namespace ServerTicTacToe
 
 
 				// if new connection received, accept it
-				var socketForClient = isClient1 ? _c1Listener.AcceptTcpClient() : _c2Listener.AcceptTcpClient();
+				var socketForClient = isClient1 ? _listener.AcceptTcpClient() : _c2Listener.AcceptTcpClient();
 				if (socketForClient.Connected)
 				{
-					// create the _c1NetStream and c1Reader and _c1Writer
+					// create the _netStream and c1Reader and _writer
 					if (isClient1)
 					{
-						_c1Listener?.Stop();
-						_c1NetStream = socketForClient.GetStream();
-						_c1Writer = new StreamWriter(_c1NetStream);
+						_listener?.Stop();
+						_netStream = socketForClient.GetStream();
+						_writer = new StreamWriter(_netStream);
 					}
 					else
 					{
@@ -146,14 +250,14 @@ namespace ServerTicTacToe
 					host.Port = port;
 					if (isClient1)
 					{
-						_c1Writer.Write(port);
-						_c1Writer.Flush();
-						_c1Writer.Close();
-						_c1NetStream.Close();
+						_writer.Write(port);
+						_writer.Flush();
+						_writer.Close();
+						_netStream.Close();
 						socketForClient.Close();
-						_c1Listener.Stop();
-						_c1Listener = new TcpListener(host);
-						_c1Listener.Start();
+						_listener.Stop();
+						_listener = new TcpListener(host);
+						_listener.Start();
 					}
 					else
 					{
@@ -172,7 +276,7 @@ namespace ServerTicTacToe
 
 
 					// Reconnect using the detected port
-					socketForClient = isClient1 ? _c1Listener.AcceptTcpClient() : _c2Listener.AcceptTcpClient();
+					socketForClient = isClient1 ? _listener.AcceptTcpClient() : _c2Listener.AcceptTcpClient();
 					if (socketForClient.Connected)
 					{
 						while (true)
@@ -182,9 +286,9 @@ namespace ServerTicTacToe
 								e.Cancel = true;
 								if (isClient1)
 								{
-									_c1Reader?.Close();
-									_c1Writer?.Close();
-									_c1NetStream?.Close();
+									_reader?.Close();
+									_writer?.Close();
+									_netStream?.Close();
 								}
 								else
 								{
@@ -195,13 +299,13 @@ namespace ServerTicTacToe
 								break;
 							}
 
-							// create the _c1NetStream and c1Reader and _c1Writer
+							// create the _netStream and c1Reader and _writer
 							if (isClient1)
 							{
-								_c1Listener?.Stop();
-								_c1NetStream = socketForClient.GetStream();
-								_c1Reader = new StreamReader(_c1NetStream);
-								_c1Writer = new StreamWriter(_c1NetStream);
+								_listener?.Stop();
+								_netStream = socketForClient.GetStream();
+								_reader = new StreamReader(_netStream);
+								_writer = new StreamWriter(_netStream);
 							}
 							else
 							{
@@ -218,7 +322,7 @@ namespace ServerTicTacToe
 							// listen to information recevied from port assigned to client 1
 							string result;
 							worker.ReportProgress(0, "Listening to client");
-							result = isClient1 ? _c1Reader.ReadLine() : _c2Reader.ReadLine();
+							result = isClient1 ? _reader.ReadLine() : _c2Reader.ReadLine();
 
 							// pass information received from port for client 1 to port for client 2 (using _c2Writer)
 							worker.ReportProgress(0, "Message Recieved: " + result);
@@ -232,9 +336,9 @@ namespace ServerTicTacToe
 							}
 							else
 							{
-								_c1Writer.WriteLine(result);
-								_c1Writer.Flush();
-								_c1Writer.Close();
+								_writer.WriteLine(result);
+								_writer.Flush();
+								_writer.Close();
 								worker.ReportProgress(0, "Message sent to client1");
 							}
 						}
@@ -280,6 +384,6 @@ namespace ServerTicTacToe
 					Active = false;
 				}
 			}
-		}
+		}*/
 	}
 }

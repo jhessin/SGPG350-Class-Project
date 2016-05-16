@@ -10,16 +10,14 @@
 // 
 // =========================================================
 
-using System.ComponentModel;
-using ServerTicTacToe;
-
 namespace ServerTicTacToe
 {
-	internal enum GameMark
+	public enum GameMark
 	{
-		X = 0,
-		O = 1,
-		None = 2
+		None = 0,
+		X = 1,
+		O = 2,
+		Draw
 	}
 
 	internal struct GameBoard
@@ -34,13 +32,13 @@ namespace ServerTicTacToe
 		private GameMark _bottomMid;
 		private GameMark _bottomRight;
 
-		private void Clear()
+		public void Clear()
 		{
 			_topLeft =
 				_topMid = _topRight = _midLeft = _midMid = _midRight = _bottomLeft = _bottomMid = _bottomRight = GameMark.None;
 		}
 
-		private void Mark(GameMark symbol, int x, int y)
+		public bool Mark(GameMark symbol, int x, int y)
 		{
 			switch (x)
 			{
@@ -48,57 +46,163 @@ namespace ServerTicTacToe
 					switch (y)
 					{
 						case 1:
-							_topLeft = symbol;
-							return;
+							if (_topLeft == GameMark.None)
+							{
+								_topLeft = symbol;
+								return true;
+							}
+							return false;
 						case 2:
-							_midLeft = symbol;
-							return;
+							if (_midLeft == GameMark.None)
+							{
+								_midLeft = symbol;
+								return true;
+							}
+							return false;
 						case 3:
-							_bottomLeft = symbol;
-							return;
+							if (_bottomLeft == GameMark.None)
+							{
+								_bottomLeft = symbol;
+								return true;
+							}
+							return false;
 					}
-					return;
+					return false;
 				case 2:
 					switch (y)
 					{
 						case 1:
-							_topMid = symbol;
-							return;
+							if (_topMid == GameMark.None)
+							{
+								_topMid = symbol;
+								return true;
+							}
+							return false;
 						case 2:
-							_midMid = symbol;
-							return;
+							if (_midMid == GameMark.None)
+							{
+								_midMid = symbol;
+								return true;
+							}
+							return false;
 						case 3:
-							_bottomMid = symbol;
-							return;
+							if (_bottomMid == GameMark.None)
+							{
+								_bottomMid = symbol;
+								return true;
+							}
+							return false;
 					}
-					return;
+					return false;
 				case 3:
 					switch (y)
 					{
 						case 1:
-							_topRight = symbol;
-							return;
+							if (_topRight == GameMark.None)
+							{
+								_topRight = symbol;
+								return true;
+							}
+							return false;
 						case 2:
-							_midRight = symbol;
-							return;
+							if (_midRight == GameMark.None)
+							{
+								_midRight = symbol;
+								return true;
+							}
+							return false;
 						case 3:
-							_bottomRight = symbol;
-							return;
+							if (_bottomRight == GameMark.None)
+							{
+								_bottomRight = symbol;
+								return true;
+							}
+							return false;
 					}
+					return false;
+				default:
+					return false;
+			}
+		}
+
+		public GameMark Winner()
+		{
+			GameMark[] winMarks = new[] {GameMark.X, GameMark.O};
+			foreach (GameMark winMark in winMarks)
+			{
+				if (_topLeft == winMark && _topMid == winMark && _topRight == winMark ||
+					_midLeft == winMark && _midMid == winMark && _midRight == winMark ||
+					_bottomLeft == winMark && _bottomMid == winMark && _bottomRight == winMark ||
+					_topLeft == winMark && _midLeft == winMark && _bottomLeft == winMark ||
+					_topMid == winMark && _midMid == winMark && _bottomMid == winMark ||
+					_topRight == winMark && _midRight == winMark && _bottomRight == winMark ||
+					_topLeft == winMark && _midMid == winMark && _bottomRight == winMark ||
+					_bottomLeft == winMark && _midMid == winMark && _topRight == winMark)
+				{
+					return winMark;
+				}
+			}
+			if (_topLeft != GameMark.None && _topMid != GameMark.None && _topRight != GameMark.None &&
+				_midLeft != GameMark.None && _midMid != GameMark.None && _midRight != GameMark.None &&
+				_bottomLeft != GameMark.None && _bottomMid != GameMark.None && _bottomRight != GameMark.None)
+			{
+				return GameMark.Draw;
+			}
+
+			return GameMark.None;
+		}
+	}
+
+	//------------------------------------------------------------------------
+	// Name:  Game
+	//
+	// Description: Contains all the information required for a game of tic-tac-toe. Including the placement of all markers currently on the board.
+	//
+	//---------------------------------------------------------------------------
+	public class Game
+	{
+		// The game board
+		private GameBoard _board;
+
+		public Game()
+		{
+			_board = new GameBoard();
+			Restart();
+		}
+
+		// Who's turn is it?
+		public GameMark Turn { get; private set; }
+
+		public void Restart()
+		{
+			_board.Clear();
+			Turn = GameMark.X;
+		}
+
+		public void Mark(int x, int y)
+		{
+			if (_board.Mark(Turn, x, y))
+			{
+				NextTurn();
+			}
+		}
+
+		public GameMark CheckWin()
+		{
+			return _board.Winner();
+		}
+
+		private void NextTurn()
+		{
+			switch (Turn)
+			{
+				case GameMark.X:
+					Turn = GameMark.O;
+					return;
+				case GameMark.O:
+					Turn = GameMark.X;
 					return;
 			}
 		}
 	}
-}
-
-//------------------------------------------------------------------------
-// Name:  Game
-//
-// Description: Contains all the information required for a game of tic-tac-toe. Including the placement of all markers currently on the board.
-//
-//---------------------------------------------------------------------------
-public class Game
-{
-	private GameBoard _board;
-	private BackgroundWorker _listenThread;
 }

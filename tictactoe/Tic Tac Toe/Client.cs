@@ -13,11 +13,11 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
+using ServerTicTacToe;
 
 namespace Tic_Tac_Toe
 {
 
-		public delegate void DisplayProgress(string message);
 //------------------------------------------------------------------------
 // Name:  Client
 //
@@ -28,7 +28,7 @@ namespace Tic_Tac_Toe
 	{
 		// Threading variables
 		private Thread _listener;
-		private DisplayProgress Display;
+		private ProgressDelegate Progress;
 
 		// Network Variables
 		private TcpClient _client;
@@ -36,9 +36,9 @@ namespace Tic_Tac_Toe
 		private StreamReader _reader;
 		private StreamWriter _writer;
 
-		public Client(DisplayProgress callback)
+		public Client(ProgressDelegate callback)
 		{
-			Display = callback;
+			Progress = callback;
 		}
 	}
 }

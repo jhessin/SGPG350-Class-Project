@@ -81,7 +81,7 @@ namespace ServerTicTacToe
 
 		// ---- THREAD DELEGATES ----
 
-		// ---- On Worker thread ----
+		// ---- Connection Delegates ----
 		private void Connect(object sender, DoWorkEventArgs e)
 		{
 			int port = (int) e.Argument;
@@ -106,15 +106,6 @@ namespace ServerTicTacToe
 			{
 				e.Result = listener.AcceptTcpClient();
 			}
-		}
-
-		// ---- On worker thread ----
-		private void Listen(object sender, DoWorkEventArgs e)
-		{
-			int port = (int) e.Argument;
-			TcpClient client = port == _port1 ? _client1 : _client2;
-			StreamReader reader = new StreamReader(client.GetStream());
-			_msgListener.ReportProgress(port, reader.ReadLine());
 		}
 
 		private void Connected(object sender, RunWorkerCompletedEventArgs e)
@@ -144,6 +135,15 @@ namespace ServerTicTacToe
 			{
 				_connectionListener.RunWorkerAsync(_connectionPort);
 			}
+		}
+
+		// ---- Listener Delegates ----
+		private void Listen(object sender, DoWorkEventArgs e)
+		{
+			int port = (int) e.Argument;
+			TcpClient client = port == _port1 ? _client1 : _client2;
+			StreamReader reader = new StreamReader(client.GetStream());
+			_msgListener.ReportProgress(port, reader.ReadLine());
 		}
 
 		private void GetMessage(object sender, ProgressChangedEventArgs e)
@@ -233,10 +233,6 @@ namespace ServerTicTacToe
 					}
 				}
 			}
-
-
-//			client1.RunWorkerAsync();
-//			client2.RunWorkerAsync();
 		}
 	}
 }

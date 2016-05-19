@@ -10,8 +10,11 @@
 // 
 // =========================================================
 
+using System;
+using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading;
 using ServerTicTacToe;
 
@@ -27,11 +30,12 @@ namespace Tic_Tac_Toe
 	public class Client
 	{
 		// Threading variables
-		private Thread _listener;
+		private BackgroundWorker _listener;
 		private ProgressDelegate Progress;
 
 		// Network Variables
 		private TcpClient _client;
+		private int _port;
 		private NetworkStream _netStream;
 		private StreamReader _reader;
 		private StreamWriter _writer;
@@ -39,6 +43,78 @@ namespace Tic_Tac_Toe
 		public Client(ProgressDelegate callback)
 		{
 			Progress = callback;
+
+			_listener = new BackgroundWorker();
+		}
+
+		public void Start(int port)
+		{
+			_listener.DoWork += Connect;
+			_listener.RunWorkerCompleted += Connected;
+
+			_listener.RunWorkerAsync(port);
+
+			while (_listener.IsBusy)
+			{
+				Progress("Connecting...");
+			}
+
+			Progress("Connected!");
+			_listener.DoWork -= Connect;
+			_listener.RunWorkerCompleted -= Connected;
+
+			_listener.DoWork += GetMessage;
+			_listener.RunWorkerCompleted += ProcessMessage;
+
+			try
+			{
+				_client = new TcpClient();
+				_client.Connect("localhost", _port);
+				_netStream = _client.GetStream();
+				_reader = new StreamReader(_netStream);
+				_writer = new StreamWriter(_netStream);
+
+				_listener.RunWorkerAsync();
+			}
+			catch (Exception)
+			{
+				
+				throw;
+			}
+		}
+
+		private void Connect(object sender, DoWorkEventArgs e)
+		{
+			int port = (int) e.Argument;
+			TcpClient client = new TcpClient();
+			StreamReader reader = null;
+			try
+			{
+				reader = new StreamReader(client.GetStream());
+				client.Connect("localhost", port);
+
+				e.Result = reader.ReadLine();
+			}
+			finally
+			{
+				client.Close();
+				reader?.Close();
+			}
+		}
+
+		private void Connected(object sender, RunWorkerCompletedEventArgs e)
+		{
+			_port = (int) e.Result;
+		}
+
+		private void GetMessage(object sender, DoWorkEventArgs e)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		private void ProcessMessage(object sender, RunWorkerCompletedEventArgs e)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

@@ -64,7 +64,7 @@ namespace Tic_Tac_Toe
 			_listener.RunWorkerCompleted -= Connected;
 
 			_listener.DoWork += GetMessage;
-			_listener.RunWorkerCompleted += ProcessMessage;
+			_listener.ProgressChanged += ProcessMessage;
 
 			try
 			{
@@ -78,8 +78,17 @@ namespace Tic_Tac_Toe
 			}
 			catch (Exception)
 			{
-				
-				throw;
+				Progress("Network Error");
+			}
+			finally
+			{
+				if (!_listener.IsBusy)
+				{
+					_writer.Close();
+					_reader.Close();
+					_netStream.Close();
+					_client.Close();
+				}
 			}
 		}
 
@@ -109,10 +118,10 @@ namespace Tic_Tac_Toe
 
 		private void GetMessage(object sender, DoWorkEventArgs e)
 		{
-			throw new System.NotImplementedException();
+			_listener.ReportProgress(0, _reader.ReadLine());
 		}
 
-		private void ProcessMessage(object sender, RunWorkerCompletedEventArgs e)
+		private void ProcessMessage(object sender, ProgressChangedEventArgs progressChangedEventArgs)
 		{
 			throw new System.NotImplementedException();
 		}

@@ -10,7 +10,7 @@
 // 
 // =========================================================
 
-namespace ServerTicTacToe
+namespace TicTacToeService
 {
 	public enum GameMark
 	{
@@ -20,7 +20,7 @@ namespace ServerTicTacToe
 		Draw
 	}
 
-	internal struct GameBoard
+	public struct GameBoard
 	{
 		private GameMark _topLeft;
 		private GameMark _topMid;

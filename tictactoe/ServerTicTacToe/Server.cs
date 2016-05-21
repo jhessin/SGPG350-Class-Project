@@ -11,18 +11,13 @@
 // =========================================================
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Runtime.CompilerServices;
-using System.Windows.Forms;
+using System.ServiceModel;
+using System.ServiceModel.Description;
+using TicTacToeService;
 
 namespace ServerTicTacToe
 {
-	public delegate void ProgressDelegate(string msg);
-	
 //------------------------------------------------------------------------
 // Name:  Server
 //
@@ -31,207 +26,100 @@ namespace ServerTicTacToe
 //---------------------------------------------------------------------------
 	public class Server
 	{
-		// The variables used to differentiate between clients
-		private int _port1 = 0;
-		private int _port2 = 0;
-		private TcpClient _client1;
-		private readonly GameMark _symbol1 = GameMark.X;
-		private readonly GameMark _symbol2 = GameMark.O;
-		private TcpClient _client2;
+		private readonly ProgressCallback _callback;
 
-		// Client threads
-		private BackgroundWorker _connectionListener;
-		private BackgroundWorker _msgListener;
+		// Flags
+		private bool _active;
+		// The network variables.
+		private Uri _baseAddress;
+		private ServiceHost _host;
 
-		// Client Flags
-		private bool _client1Connected;
-		private bool _client2Connected;
-		private int _connectionPort;
+		private class ProgressCallback : ITicTacToeCallback
+		{
+			private readonly ProgressDelegate _progress;
 
-		// The game itself
-		private Game _game;
+			public ProgressCallback(ProgressDelegate result)
+			{
+				_progress = result;
+			}
 
-		// Is the server active (are 
-		public bool Active { get; private set; }
-		private readonly ProgressDelegate Progress;
+			public void Progress(string format, params object[] args)
+			{
+				_progress(format, args);
+			}
+		}
 
 		public Server(ProgressDelegate callback)
 		{
-			Active = false;
+			_callback = new ProgressCallback(callback);
 
-			Progress = callback;
+			_active = false;
 
-			_msgListener.DoWork += Listen;
-			_msgListener.ProgressChanged += GetMessage;
-
-			_connectionListener.DoWork += Connect;
-			_connectionListener.RunWorkerCompleted += Connected;
+			// Step 1 Create a URI to serve as the base address.
+			_baseAddress = new Uri("http://localhost:8000/TicTacToe/");
 		}
 
-		private void SendToClient(TcpClient client, object msg)
+		private void ReportException(Exception ce)
 		{
-			NetworkStream stream = client.GetStream();
-			StreamWriter writer = new StreamWriter(stream);
-
-			writer.Write(msg);
-			writer.Flush();
-			writer.Close();
-			stream.Close();
-		}
-
-		// ---- THREAD DELEGATES ----
-
-		// ---- Connection Delegates ----
-		private void Connect(object sender, DoWorkEventArgs e)
-		{
-			int port = (int) e.Argument;
-			TcpListener listener = new TcpListener(IPAddress.Any, port);
-			if (port == _port1)
-			{
-				e.Result = _client1 = listener.AcceptTcpClient();
-				if (_client1.Connected)
-				{
-					_client1Connected = true;
-				}
-			}
-			else if (port == _port2)
-			{
-				e.Result = _client2 = listener.AcceptTcpClient();
-				if (_client2.Connected)
-				{
-					_client2Connected = true;
-				}
-			}
-			else
-			{
-				e.Result = listener.AcceptTcpClient();
-			}
-		}
-
-		private void Connected(object sender, RunWorkerCompletedEventArgs e)
-		{
-
-			// Runs after a connection is established.
-			if (_port1 == 0)
-			{
-				_client1 = (TcpClient) e.Result;
-				_port1 = GetFreePort();
-				SendToClient(_client1, _port1);
-				_client1.Close();
-				_client1 = null;
-				_connectionListener.RunWorkerAsync(_port1);
-				return;
-			}
-			if (_port2 == 0)
-			{
-				_port2 = GetFreePort();
-				SendToClient(_client2, _port2);
-				_client2.Close();
-				_client2 = null;
-				_connectionListener.RunWorkerAsync(_port2);
-				return;
-			}
-			if (_client1Connected && !_client2Connected)
-			{
-				_connectionListener.RunWorkerAsync(_connectionPort);
-			}
-		}
-
-		// ---- Listener Delegates ----
-		private void Listen(object sender, DoWorkEventArgs e)
-		{
-			int port = (int) e.Argument;
-			TcpClient client = port == _port1 ? _client1 : _client2;
-			StreamReader reader = new StreamReader(client.GetStream());
-			_msgListener.ReportProgress(port, reader.ReadLine());
-		}
-
-		private void GetMessage(object sender, ProgressChangedEventArgs e)
-		{
-
-			string msg = (string) e.UserState;
-			ReadMessage(e.ProgressPercentage, msg);
-		}
-		// ---- END THREAD DELEGATES ----
-
-		private void ReadMessage(int port, string msg)
-		{
-			int clientNum = port == _port1 ? 1 : 2;
-			TcpClient client = port == _port1 ? _client1 : _client2;
-
-			// Interpret the message
-			string cmd = msg.Substring(0, 4);
-
-			switch (cmd)
-			{
-				case "smbl":
-					// Send the client's appropriate symbol.
-					if (clientNum == 1)
-					{
-						SendToClient(client, _symbol1);
-					}
-					else
-					{
-						SendToClient(client, _symbol2);
-					}
-					break;
-				case "turn":
-					// Send "X" or "O" to signify who's turn it is.
-					SendToClient(client, _game.Turn);
-					break;
-				case "move":
-					// Read the move string and make the appropriate adjustments to the game board.
-					cmd = msg.Substring(4);
-					string[] data = new string[10];
-					data = cmd.Split(',');
-					_game.Mark(int.Parse(data[0]), int.Parse(data[1]));
-
-					// Send the gameboard to each client - forcing a redraw.
-					SendToClient(_client1, _game);
-					SendToClient(_client2, _game);
-					break;
-			}
-		}
-
-		private static int GetFreePort()
-		{
-			TcpListener l = new TcpListener(IPAddress.Loopback, 0);
-			l.Start();
-			int port = ((IPEndPoint) l.LocalEndpoint).Port;
-			l.Stop();
-			return port;
+			_callback.Progress("An Exception occured: " + ce.Message);
+			Trace.TraceError("An Exception occured: " + ce.Message);
 		}
 
 		public void Start(int port)
 		{
 			// Can only be started once.
-			if (Active)
+			if (_active)
 			{
 				return;
 			}
 
-			Active = true;
-			_connectionPort = port;
+			_active = true;
 
-			_connectionListener.RunWorkerAsync(port);
 
-			while (!_client1Connected || !_client2Connected)
+			// Step 2 Create a ServiceHost instance
+			_host = new ServiceHost(typeof (GameClient));
+			_host.AddServiceEndpoint(
+				typeof (ITicTacToe),
+				new NetTcpBinding(),
+				"net.tcp://localhost:" + port);
+			try
 			{
-				if (Progress != null)
-				{
-					if (!_client1Connected)
-					{
-						Progress("Waiting for clients");
-					}
-					else if (!_client2Connected)
-					{
-						Progress("Client 1 connected. Waiting for Client 2.");
-					}
-					else
-					{
-						Progress("Clients Connected! Starting Game.");
-					}
-				}
+				// Step 4 Enable metadata exchange
+				ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
+				smb.HttpGetEnabled = false;
+				_host.Description.Behaviors.Add(smb);
+
+				// step 5 Start the service
+				_host.Open();
+
+				// Create client to assign the progress delegate.
+				DuplexChannelFactory<ITicTacToe> scf;
+				scf = new DuplexChannelFactory<ITicTacToe>(_callback,
+					new NetTcpBinding(),
+					"net.tcp://localhost:" + port);
+
+				ITicTacToe s = scf.CreateChannel();
+
+
+				(s as ICommunicationObject)?.Close();
+
+				_callback.Progress("Service Started");
+			}
+			catch (Exception ce)
+			{
+				ReportException(ce);
+				_host.Abort();
+				_active = false;
+			}
+		}
+
+		public void Stop()
+		{
+			if (_active)
+			{
+				_host.Close();
+				_callback.Progress("Service Stopped");
+				_active = false;
 			}
 		}
 	}

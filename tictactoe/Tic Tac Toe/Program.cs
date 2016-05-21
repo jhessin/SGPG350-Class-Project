@@ -14,7 +14,7 @@ namespace Tic_Tac_Toe
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TicTacToeWindow());
+            Application.Run(new GameWindow());
         }
     }
 }

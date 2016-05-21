@@ -13,7 +13,7 @@ namespace MultiDebug
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MultiFormContext(new ServerWindow(), new TicTacToeWindow(), new TicTacToeWindow()));
+			Application.Run(new MultiFormContext(new ServerWindow(), new GameWindow(), new GameWindow()));
 		}
 	}
 

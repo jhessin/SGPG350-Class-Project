@@ -21,7 +21,7 @@ using ServerTicTacToe;
 
 namespace Tic_Tac_Toe
 {
-	public partial class TicTacToeWindow : Form
+	public partial class GameWindow : Form
 	{
 		private const string RESTART_REQUEST = "Restart";
 		private bool _boolPlayerTurn = true; // declare a variable for players turn
@@ -32,7 +32,7 @@ namespace Tic_Tac_Toe
 		private StreamWriter _writer;
 		private Game _game;
 
-		public TicTacToeWindow()
+		public GameWindow()
 		{
 			InitializeComponent();
 		}

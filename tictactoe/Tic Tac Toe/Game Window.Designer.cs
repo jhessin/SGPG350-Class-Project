@@ -1,6 +1,6 @@
 namespace Tic_Tac_Toe
 {
-    partial class TicTacToeWindow
+    partial class GameWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -48,10 +48,10 @@ namespace Tic_Tac_Toe
 			this.listenThread = new System.ComponentModel.BackgroundWorker();
 			this.File = new System.Windows.Forms.MenuStrip();
 			this.Reset = new System.Windows.Forms.ToolStripMenuItem();
-			this.resetGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.resetGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.File.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -295,33 +295,33 @@ namespace Tic_Tac_Toe
 			this.Reset.Size = new System.Drawing.Size(37, 20);
 			this.Reset.Text = "&File";
 			// 
-			// resetGameToolStripMenuItem
-			// 
-			this.resetGameToolStripMenuItem.Name = "resetGameToolStripMenuItem";
-			this.resetGameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.resetGameToolStripMenuItem.Text = "&Reset Game";
-			this.resetGameToolStripMenuItem.Click += new System.EventHandler(this.btnStart_Click);
-			// 
-			// exitToolStripMenuItem
-			// 
-			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.exitToolStripMenuItem.Text = "E&xit";
-			this.exitToolStripMenuItem.Click += new System.EventHandler(this.btnDisconnect_Click);
-			// 
 			// connectToolStripMenuItem
 			// 
 			this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-			this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.connectToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
 			this.connectToolStripMenuItem.Text = "&Connect";
 			this.connectToolStripMenuItem.Click += new System.EventHandler(this.btnConnect_Click);
+			// 
+			// resetGameToolStripMenuItem
+			// 
+			this.resetGameToolStripMenuItem.Name = "resetGameToolStripMenuItem";
+			this.resetGameToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+			this.resetGameToolStripMenuItem.Text = "&Reset Game";
+			this.resetGameToolStripMenuItem.Click += new System.EventHandler(this.btnStart_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(133, 6);
 			// 
-			// TicTacToeWindow
+			// exitToolStripMenuItem
+			// 
+			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+			this.exitToolStripMenuItem.Text = "E&xit";
+			this.exitToolStripMenuItem.Click += new System.EventHandler(this.btnDisconnect_Click);
+			// 
+			// GameWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -346,7 +346,7 @@ namespace Tic_Tac_Toe
 			this.Controls.Add(this.lblUpperLeft);
 			this.Controls.Add(this.File);
 			this.MainMenuStrip = this.File;
-			this.Name = "TicTacToeWindow";
+			this.Name = "GameWindow";
 			this.Text = "Tic Tac Toe";
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.File.ResumeLayout(false);

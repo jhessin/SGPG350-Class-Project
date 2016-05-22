@@ -14,16 +14,19 @@ using System;
 using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using TicTacToeService;
+using Service;
 
 namespace ServerTicTacToe
 {
-//------------------------------------------------------------------------
-// Name:  Server
-//
-// Description: The server that handles negotiating the connection with each client and communication between them.
-//
-//---------------------------------------------------------------------------
+	// A delegate for reporting progress.
+	public delegate void ProgressDelegate(string format, params object[] args);
+
+	//------------------------------------------------------------------------
+	// Name:  Server
+	//
+	// Description: The server that handles negotiating the connection with each client and communication between them.
+	//
+	//---------------------------------------------------------------------------
 	public class Server
 	{
 		private readonly ProgressCallback _callback;
@@ -31,10 +34,9 @@ namespace ServerTicTacToe
 		// Flags
 		private bool _active;
 		// The network variables.
-		private Uri _baseAddress;
 		private ServiceHost _host;
 
-		private class ProgressCallback : ITicTacToeCallback
+		private class ProgressCallback : IServiceCallback
 		{
 			private readonly ProgressDelegate _progress;
 
@@ -54,9 +56,6 @@ namespace ServerTicTacToe
 			_callback = new ProgressCallback(callback);
 
 			_active = false;
-
-			// Step 1 Create a URI to serve as the base address.
-			_baseAddress = new Uri("http://localhost:8000/TicTacToe/");
 		}
 
 		private void ReportException(Exception ce)
@@ -77,33 +76,32 @@ namespace ServerTicTacToe
 
 
 			// Step 2 Create a ServiceHost instance
-			_host = new ServiceHost(typeof (GameClient));
+			_host = new ServiceHost(typeof (Service1));
 			_host.AddServiceEndpoint(
-				typeof (ITicTacToe),
+				typeof (IService1),
 				new NetTcpBinding(),
 				"net.tcp://localhost:" + port);
 			try
 			{
 				// Step 4 Enable metadata exchange
-				ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
-				smb.HttpGetEnabled = false;
-				_host.Description.Behaviors.Add(smb);
+//				ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
+//				smb.HttpGetEnabled = false;
+//				_host.Description.Behaviors.Add(smb);
 
 				// step 5 Start the service
 				_host.Open();
 
 				// Create client to assign the progress delegate.
-				DuplexChannelFactory<ITicTacToe> scf;
-				scf = new DuplexChannelFactory<ITicTacToe>(_callback,
+				DuplexChannelFactory<IService1> scf;
+				scf = new DuplexChannelFactory<IService1>(_callback,
 					new NetTcpBinding(),
 					"net.tcp://localhost:" + port);
 
-				ITicTacToe s = scf.CreateChannel();
-
-
+				IService1 s = scf.CreateChannel();
+				
 				(s as ICommunicationObject)?.Close();
 
-				_callback.Progress("Service Started");
+				_callback.Progress("Service Started on port {0}", port);
 			}
 			catch (Exception ce)
 			{

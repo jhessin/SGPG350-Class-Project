@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Service1" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="NetTcpBinding_TicTacToe_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <msf:WindowsTransportSecurity xmlns:msf="http://schemas.microsoft.com/ws/2006/05/framing/policy">
+                  <msf:ProtectionLevel>EncryptAndSign</msf:ProtectionLevel>
+                </msf:WindowsTransportSecurity>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict />
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import namespace="http://tempuri.org/" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Service" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="TicTacToe_GetSymbol_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSymbol" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_GetSymbol_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSymbolResponse" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_GetTurn_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTurn" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_GetTurn_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTurnResponse" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_Mark_InputMessage">
+    <wsdl:part name="parameters" element="tns:Mark" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_Update_InputMessage">
+    <wsdl:part name="parameters" element="tns:Update" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_Update_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_Winner_InputMessage">
+    <wsdl:part name="parameters" element="tns:Winner" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_Winner_OutputMessage">
+    <wsdl:part name="parameters" element="tns:WinnerResponse" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_Reset_InputMessage">
+    <wsdl:part name="parameters" element="tns:Reset" />
+  </wsdl:message>
+  <wsdl:message name="TicTacToe_Progress_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:Progress" />
+  </wsdl:message>
+  <wsdl:portType msc:usingSession="true" name="TicTacToe">
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetSymbol">
+      <wsdl:input wsaw:Action="http://tempuri.org/TicTacToe/GetSymbol" message="tns:TicTacToe_GetSymbol_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/TicTacToe/GetSymbolResponse" message="tns:TicTacToe_GetSymbol_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="GetTurn">
+      <wsdl:input wsaw:Action="http://tempuri.org/TicTacToe/GetTurn" message="tns:TicTacToe_GetTurn_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/TicTacToe/GetTurnResponse" message="tns:TicTacToe_GetTurn_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Mark">
+      <wsdl:input wsaw:Action="http://tempuri.org/TicTacToe/Mark" message="tns:TicTacToe_Mark_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Update">
+      <wsdl:input wsaw:Action="http://tempuri.org/TicTacToe/Update" message="tns:TicTacToe_Update_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/TicTacToe/UpdateResponse" message="tns:TicTacToe_Update_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Winner">
+      <wsdl:input wsaw:Action="http://tempuri.org/TicTacToe/Winner" message="tns:TicTacToe_Winner_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/TicTacToe/WinnerResponse" message="tns:TicTacToe_Winner_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Reset">
+      <wsdl:input wsaw:Action="http://tempuri.org/TicTacToe/Reset" message="tns:TicTacToe_Reset_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="Progress">
+      <wsdl:output wsaw:Action="http://tempuri.org/TicTacToe/Progress" message="tns:TicTacToe_Progress_OutputCallbackMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NetTcpBinding_TicTacToe" type="tns:TicTacToe">
+    <wsp:PolicyReference URI="#NetTcpBinding_TicTacToe_policy" />
+    <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
+    <wsdl:operation name="GetSymbol">
+      <soap12:operation soapAction="http://tempuri.org/TicTacToe/GetSymbol" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTurn">
+      <soap12:operation soapAction="http://tempuri.org/TicTacToe/GetTurn" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Mark">
+      <soap12:operation soapAction="http://tempuri.org/TicTacToe/Mark" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <soap12:operation soapAction="http://tempuri.org/TicTacToe/Update" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Winner">
+      <soap12:operation soapAction="http://tempuri.org/TicTacToe/Winner" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Reset">
+      <soap12:operation soapAction="http://tempuri.org/TicTacToe/Reset" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="Progress">
+      <soap12:operation soapAction="http://tempuri.org/TicTacToe/Progress" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Service1">
+    <wsdl:port name="NetTcpBinding_TicTacToe" binding="tns:NetTcpBinding_TicTacToe">
+      <soap12:address location="net.tcp://localhost:8000/Design_Time_Addresses/Service/Service1/" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>net.tcp://localhost:8000/Design_Time_Addresses/Service/Service1/</wsa10:Address>
+        <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+          <Dns>localhost</Dns>
+        </Identity>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

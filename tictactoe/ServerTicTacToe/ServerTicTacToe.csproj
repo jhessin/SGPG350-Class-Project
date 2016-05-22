@@ -116,9 +116,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TicTacToeService\TicTacToeService.csproj">
-      <Project>{99972e46-0646-4042-9200-ece23483f40e}</Project>
-      <Name>TicTacToeService</Name>
+    <ProjectReference Include="..\Service\Service.csproj">
+      <Project>{3ead8030-ec49-45dc-9b04-51c1e6dd8d2e}</Project>
+      <Name>Service</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

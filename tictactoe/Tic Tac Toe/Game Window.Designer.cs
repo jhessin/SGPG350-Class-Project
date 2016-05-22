@@ -2,58 +2,54 @@ namespace Tic_Tac_Toe
 {
     partial class GameWindow
     {
-        /// <summary>
+	    /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+	    /// <summary>
+	    /// Required method for Designer support - do not modify
+	    /// the contents of this method with the code editor.
+	    /// </summary>
+	    private void InitializeComponent()
+	    {
+			this.lblYourSymbol = new System.Windows.Forms.Label();
 			this.lblUpperLeft = new System.Windows.Forms.Label();
 			this.lblUpperMiddle = new System.Windows.Forms.Label();
 			this.lblUpperRight = new System.Windows.Forms.Label();
-			this.lblLeft = new System.Windows.Forms.Label();
-			this.lblMiddle = new System.Windows.Forms.Label();
-			this.lblRight = new System.Windows.Forms.Label();
+			this.lblMidLeft = new System.Windows.Forms.Label();
+			this.lblMidMid = new System.Windows.Forms.Label();
+			this.lblMidRight = new System.Windows.Forms.Label();
 			this.lblLowerLeft = new System.Windows.Forms.Label();
 			this.lblLowerMiddle = new System.Windows.Forms.Label();
 			this.lblLowerRight = new System.Windows.Forms.Label();
 			this.btnStart = new System.Windows.Forms.Button();
-			this.radX = new System.Windows.Forms.RadioButton();
-			this.radO = new System.Windows.Forms.RadioButton();
 			this.btnConnect = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.txtConnectPort = new System.Windows.Forms.TextBox();
 			this.lblMessage = new System.Windows.Forms.Label();
 			this.btnDisconnect = new System.Windows.Forms.Button();
-			this.listenThread = new System.ComponentModel.BackgroundWorker();
 			this.File = new System.Windows.Forms.MenuStrip();
 			this.Reset = new System.Windows.Forms.ToolStripMenuItem();
 			this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.resetGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.lblYourTurn = new System.Windows.Forms.Label();
 			this.File.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// lblYourSymbol
+			// 
+			this.lblYourSymbol.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+			this.lblYourSymbol.Cursor = System.Windows.Forms.Cursors.AppStarting;
+			this.lblYourSymbol.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblYourSymbol.Location = new System.Drawing.Point(4, 354);
+			this.lblYourSymbol.Name = "lblYourSymbol";
+			this.lblYourSymbol.Size = new System.Drawing.Size(95, 23);
+			this.lblYourSymbol.TabIndex = 23;
+			this.lblYourSymbol.Text = "You are: ";
+			this.lblYourSymbol.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// lblUpperLeft
 			// 
@@ -97,47 +93,47 @@ namespace Tic_Tac_Toe
 			this.lblUpperRight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.lblUpperRight.Click += new System.EventHandler(this.lblUpperRight_Click);
 			// 
-			// lblLeft
+			// lblMidLeft
 			// 
-			this.lblLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-			this.lblLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.lblLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblLeft.Location = new System.Drawing.Point(-1, 139);
-			this.lblLeft.Margin = new System.Windows.Forms.Padding(5);
-			this.lblLeft.Name = "lblLeft";
-			this.lblLeft.Size = new System.Drawing.Size(100, 100);
-			this.lblLeft.TabIndex = 3;
-			this.lblLeft.Text = "X";
-			this.lblLeft.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.lblLeft.Click += new System.EventHandler(this.lblLeft_Click);
+			this.lblMidLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+			this.lblMidLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.lblMidLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblMidLeft.Location = new System.Drawing.Point(-1, 139);
+			this.lblMidLeft.Margin = new System.Windows.Forms.Padding(5);
+			this.lblMidLeft.Name = "lblMidLeft";
+			this.lblMidLeft.Size = new System.Drawing.Size(100, 100);
+			this.lblMidLeft.TabIndex = 3;
+			this.lblMidLeft.Text = "X";
+			this.lblMidLeft.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.lblMidLeft.Click += new System.EventHandler(this.lblLeft_Click);
 			// 
-			// lblMiddle
+			// lblMidMid
 			// 
-			this.lblMiddle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-			this.lblMiddle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.lblMiddle.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblMiddle.Location = new System.Drawing.Point(109, 139);
-			this.lblMiddle.Margin = new System.Windows.Forms.Padding(5);
-			this.lblMiddle.Name = "lblMiddle";
-			this.lblMiddle.Size = new System.Drawing.Size(100, 100);
-			this.lblMiddle.TabIndex = 4;
-			this.lblMiddle.Text = "X";
-			this.lblMiddle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.lblMiddle.Click += new System.EventHandler(this.lblMiddle_Click);
+			this.lblMidMid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+			this.lblMidMid.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.lblMidMid.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblMidMid.Location = new System.Drawing.Point(109, 139);
+			this.lblMidMid.Margin = new System.Windows.Forms.Padding(5);
+			this.lblMidMid.Name = "lblMidMid";
+			this.lblMidMid.Size = new System.Drawing.Size(100, 100);
+			this.lblMidMid.TabIndex = 4;
+			this.lblMidMid.Text = "X";
+			this.lblMidMid.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.lblMidMid.Click += new System.EventHandler(this.lblMiddle_Click);
 			// 
-			// lblRight
+			// lblMidRight
 			// 
-			this.lblRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-			this.lblRight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.lblRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblRight.Location = new System.Drawing.Point(219, 139);
-			this.lblRight.Margin = new System.Windows.Forms.Padding(5);
-			this.lblRight.Name = "lblRight";
-			this.lblRight.Size = new System.Drawing.Size(100, 100);
-			this.lblRight.TabIndex = 5;
-			this.lblRight.Text = "O";
-			this.lblRight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.lblRight.Click += new System.EventHandler(this.lblRight_Click);
+			this.lblMidRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+			this.lblMidRight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.lblMidRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblMidRight.Location = new System.Drawing.Point(219, 139);
+			this.lblMidRight.Margin = new System.Windows.Forms.Padding(5);
+			this.lblMidRight.Name = "lblMidRight";
+			this.lblMidRight.Size = new System.Drawing.Size(100, 100);
+			this.lblMidRight.TabIndex = 5;
+			this.lblMidRight.Text = "O";
+			this.lblMidRight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.lblMidRight.Click += new System.EventHandler(this.lblRight_Click);
 			// 
 			// lblLowerLeft
 			// 
@@ -193,32 +189,6 @@ namespace Tic_Tac_Toe
 			this.btnStart.UseVisualStyleBackColor = true;
 			this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
 			// 
-			// radX
-			// 
-			this.radX.AutoSize = true;
-			this.radX.Checked = true;
-			this.radX.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.radX.Location = new System.Drawing.Point(41, 360);
-			this.radX.Name = "radX";
-			this.radX.Size = new System.Drawing.Size(39, 24);
-			this.radX.TabIndex = 15;
-			this.radX.TabStop = true;
-			this.radX.Text = "X";
-			this.radX.UseVisualStyleBackColor = true;
-			this.radX.CheckedChanged += new System.EventHandler(this.radX_CheckedChanged);
-			// 
-			// radO
-			// 
-			this.radO.AutoSize = true;
-			this.radO.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.radO.Location = new System.Drawing.Point(214, 359);
-			this.radO.Name = "radO";
-			this.radO.Size = new System.Drawing.Size(40, 24);
-			this.radO.TabIndex = 16;
-			this.radO.Text = "O";
-			this.radO.UseVisualStyleBackColor = true;
-			this.radO.CheckedChanged += new System.EventHandler(this.radO_CheckedChanged);
-			// 
 			// btnConnect
 			// 
 			this.btnConnect.Location = new System.Drawing.Point(150, 438);
@@ -245,6 +215,7 @@ namespace Tic_Tac_Toe
 			this.txtConnectPort.Size = new System.Drawing.Size(43, 20);
 			this.txtConnectPort.TabIndex = 19;
 			this.txtConnectPort.Text = "33";
+			this.txtConnectPort.TextChanged += new System.EventHandler(this.txtConnectPort_TextChanged);
 			// 
 			// lblMessage
 			// 
@@ -259,6 +230,7 @@ namespace Tic_Tac_Toe
 			// 
 			// btnDisconnect
 			// 
+			this.btnDisconnect.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.btnDisconnect.Location = new System.Drawing.Point(233, 438);
 			this.btnDisconnect.Name = "btnDisconnect";
 			this.btnDisconnect.Size = new System.Drawing.Size(75, 35);
@@ -266,13 +238,6 @@ namespace Tic_Tac_Toe
 			this.btnDisconnect.Text = "Disconnect";
 			this.btnDisconnect.UseVisualStyleBackColor = true;
 			this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
-			// 
-			// listenThread
-			// 
-			this.listenThread.WorkerReportsProgress = true;
-			this.listenThread.WorkerSupportsCancellation = true;
-			this.listenThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.Listen);
-			this.listenThread.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.UpdateProgress);
 			// 
 			// File
 			// 
@@ -321,32 +286,51 @@ namespace Tic_Tac_Toe
 			this.exitToolStripMenuItem.Text = "E&xit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.btnDisconnect_Click);
 			// 
+			// lblYourTurn
+			// 
+			this.lblYourTurn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+			this.lblYourTurn.Cursor = System.Windows.Forms.Cursors.AppStarting;
+			this.lblYourTurn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblYourTurn.Location = new System.Drawing.Point(219, 354);
+			this.lblYourTurn.Name = "lblYourTurn";
+			this.lblYourTurn.Size = new System.Drawing.Size(100, 23);
+			this.lblYourTurn.TabIndex = 24;
+			this.lblYourTurn.Text = "YourTurn";
+			this.lblYourTurn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
 			// GameWindow
 			// 
+			this.AcceptButton = this.btnConnect;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSize = true;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+			this.CancelButton = this.btnDisconnect;
 			this.ClientSize = new System.Drawing.Size(321, 516);
+			this.Controls.Add(this.lblYourTurn);
+			this.Controls.Add(this.lblYourSymbol);
 			this.Controls.Add(this.btnDisconnect);
 			this.Controls.Add(this.lblMessage);
 			this.Controls.Add(this.txtConnectPort);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.btnConnect);
-			this.Controls.Add(this.radO);
-			this.Controls.Add(this.radX);
 			this.Controls.Add(this.btnStart);
 			this.Controls.Add(this.lblLowerRight);
 			this.Controls.Add(this.lblLowerMiddle);
 			this.Controls.Add(this.lblLowerLeft);
-			this.Controls.Add(this.lblRight);
-			this.Controls.Add(this.lblMiddle);
-			this.Controls.Add(this.lblLeft);
+			this.Controls.Add(this.lblMidRight);
+			this.Controls.Add(this.lblMidMid);
+			this.Controls.Add(this.lblMidLeft);
 			this.Controls.Add(this.lblUpperRight);
 			this.Controls.Add(this.lblUpperMiddle);
 			this.Controls.Add(this.lblUpperLeft);
 			this.Controls.Add(this.File);
 			this.MainMenuStrip = this.File;
+			this.MaximizeBox = false;
+			this.MaximumSize = new System.Drawing.Size(337, 555);
+			this.MinimumSize = new System.Drawing.Size(337, 555);
 			this.Name = "GameWindow";
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "Tic Tac Toe";
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.File.ResumeLayout(false);
@@ -354,34 +338,48 @@ namespace Tic_Tac_Toe
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
+	    }
+
+	    /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
-        #endregion
+	    #region Windows Form Designer generated code
+
+	    #endregion
 
         private System.Windows.Forms.Label lblUpperLeft;
         private System.Windows.Forms.Label lblUpperMiddle;
         private System.Windows.Forms.Label lblUpperRight;
-        private System.Windows.Forms.Label lblLeft;
-        private System.Windows.Forms.Label lblMiddle;
-        private System.Windows.Forms.Label lblRight;
+        private System.Windows.Forms.Label lblMidLeft;
+        private System.Windows.Forms.Label lblMidMid;
+        private System.Windows.Forms.Label lblMidRight;
         private System.Windows.Forms.Label lblLowerLeft;
         private System.Windows.Forms.Label lblLowerMiddle;
         private System.Windows.Forms.Label lblLowerRight;
         private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.RadioButton radX;
-        private System.Windows.Forms.RadioButton radO;
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtConnectPort;
         private System.Windows.Forms.Label lblMessage;
         private System.Windows.Forms.Button btnDisconnect;
-		private System.ComponentModel.BackgroundWorker listenThread;
 		private System.Windows.Forms.MenuStrip File;
 		private System.Windows.Forms.ToolStripMenuItem Reset;
 		private System.Windows.Forms.ToolStripMenuItem resetGameToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private System.Windows.Forms.Label lblYourTurn;
+		private System.Windows.Forms.Label lblYourSymbol;
 	}
 }
 

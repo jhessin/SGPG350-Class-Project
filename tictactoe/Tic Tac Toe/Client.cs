@@ -11,15 +11,19 @@
 // =========================================================
 
 using System;
-using System.ComponentModel;
-using System.IO;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
+using System.ServiceModel;
 using System.Threading;
 using ServerTicTacToe;
+using Tic_Tac_Toe.ServiceReference1;
 
 namespace Tic_Tac_Toe
 {
+	internal class ServiceDelegate : TicTacToeCallback
+	{
+		public void Progress(string format, object[] args)
+		{
+		}
+	}
 
 //------------------------------------------------------------------------
 // Name:  Client
@@ -29,101 +33,134 @@ namespace Tic_Tac_Toe
 //---------------------------------------------------------------------------
 	public class Client
 	{
-		// Threading variables
-		private BackgroundWorker _listener;
-		private ProgressDelegate Progress;
+		// Delegates and Network variables
+		private readonly ProgressDelegate _callback;
+		private TicTacToeClient _client;
 
-		// Network Variables
-		private TcpClient _client;
-		private int _port;
-		private NetworkStream _netStream;
-		private StreamReader _reader;
-		private StreamWriter _writer;
+		// flags
+		private bool _connected;
+
 
 		public Client(ProgressDelegate callback)
 		{
-			Progress = callback;
+			_callback = callback;
 
-			_listener = new BackgroundWorker();
+			_connected = false;
 		}
 
 		public void Start(int port)
 		{
-			_listener.DoWork += Connect;
-			_listener.RunWorkerCompleted += Connected;
-
-			_listener.RunWorkerAsync(port);
-
-			while (_listener.IsBusy)
+			if (_connected)
 			{
-				Progress("Connecting...");
+				return;
 			}
 
-			Progress("Connected!");
-			_listener.DoWork -= Connect;
-			_listener.RunWorkerCompleted -= Connected;
-
-			_listener.DoWork += GetMessage;
-			_listener.ProgressChanged += ProcessMessage;
+			_connected = true;
 
 			try
 			{
-				_client = new TcpClient();
-				_client.Connect("localhost", _port);
-				_netStream = _client.GetStream();
-				_reader = new StreamReader(_netStream);
-				_writer = new StreamWriter(_netStream);
+				_client = new TicTacToeClient(
+					new InstanceContext(new ServiceDelegate()),
+					new NetTcpBinding(),
+					new EndpointAddress("net.tcp://localhost:" + port));
+				_callback("Connected. Player {0}", GetMark());
+			}
+			catch (Exception e)
+			{
+				_callback("An exception occured: {0}", e.Message);
+				_client?.Close();
+				_connected = false;
+			}
+		}
 
-				_listener.RunWorkerAsync();
+		public string GetMark()
+		{
+			try
+			{
+				return _client.GetSymbol() == GameMark.X ? "X" : "O";
+			}
+			catch (Exception e)
+			{
+				_callback("Error: {0}", e.Message);
+				return "";
+			}
+		}
+
+		public string GetOponentMark()
+		{
+			try
+			{
+				return _client.GetSymbol() == GameMark.X ? "O" : "X";
+			}
+			catch (Exception e)
+			{
+				_callback("Error: {0}", e.Message);
+				return "";
+			}
+		}
+
+		public bool YourTurn()
+		{
+			try
+			{
+				return _client.GetSymbol() == _client.GetTurn();
+			}
+			catch (Exception e)
+			{
+				_callback("Error: {0}", e.Message);
+				return false;
+			}
+		}
+
+		public GameBoard UpdateBoard()
+		{
+			try
+			{
+				return _client.Update();
 			}
 			catch (Exception)
 			{
-				Progress("Network Error");
-			}
-			finally
-			{
-				if (!_listener.IsBusy)
-				{
-					_writer.Close();
-					_reader.Close();
-					_netStream.Close();
-					_client.Close();
-				}
+				return new GameBoard();
 			}
 		}
 
-		private void Connect(object sender, DoWorkEventArgs e)
+		public void Mark(int x, int y)
 		{
-			int port = (int) e.Argument;
-			TcpClient client = new TcpClient();
-			StreamReader reader = null;
 			try
 			{
-				reader = new StreamReader(client.GetStream());
-				client.Connect("localhost", port);
-
-				e.Result = reader.ReadLine();
+				_client.Mark(x, y);
 			}
-			finally
+			catch (Exception e)
 			{
-				client.Close();
-				reader?.Close();
+				_callback("Error: {0}", e.Message);
 			}
 		}
 
-		private void Connected(object sender, RunWorkerCompletedEventArgs e)
+		public void Stop()
 		{
-			_port = (int) e.Result;
+			if (_connected)
+			{
+				Thread.Sleep(5000);
+				_client.Close();
+				_connected = false;
+			}
 		}
 
-		private void GetMessage(object sender, DoWorkEventArgs e)
+		public void Reset()
 		{
-			_listener.ReportProgress(0, _reader.ReadLine());
+			if (_connected)
+			{
+				_client.Reset();
+			}
 		}
 
-		private void ProcessMessage(object sender, ProgressChangedEventArgs progressChangedEventArgs)
+		public GameMark Winner()
 		{
-			throw new System.NotImplementedException();
+			if (_connected)
+			{
+				return _client.Winner();
+			}
+			return GameMark.None;
 		}
 	}
 }

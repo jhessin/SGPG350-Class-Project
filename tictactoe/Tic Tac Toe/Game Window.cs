@@ -1,6 +1,6 @@
 // ========================================================
 // 
-//   File Name:   Tic Tac Toe.cs
+//   File Name:   Game Window.cs
 // 
 //   Author:  Jim Hessin
 // 
@@ -11,30 +11,57 @@
 // =========================================================
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Net.Sockets;
+using System.Threading;
 using System.Windows.Forms;
-using ServerTicTacToe;
+using Tic_Tac_Toe.ServiceReference1;
 
 namespace Tic_Tac_Toe
 {
 	public partial class GameWindow : Form
 	{
-		private const string RESTART_REQUEST = "Restart";
-		private bool _boolPlayerTurn = true; // declare a variable for players turn
+		private GameBoard _board;
 		private bool _bWeHaveAWinner;
-		private TcpClient _client;
-		private NetworkStream _netStream;
-		private StreamReader _reader;
-		private StreamWriter _writer;
-		private Game _game;
+
+		private readonly Client _client;
+
+		// flags
+
+		private bool _connected;
+
+		private int _port;
 
 		public GameWindow()
 		{
 			InitializeComponent();
+
+			_client = new Client(UpdateProgress);
+			_port = 32;
+			btnStart.Enabled = _connected = false;
+			_board = new GameBoard();
+		}
+
+		private void btnConnect_Click(object sender, EventArgs e)
+		{
+			if (_connected)
+			{
+				return;
+			}
+
+			_client.Start(int.Parse(txtConnectPort.Text));
+			btnStart.Enabled = _connected = true;
+
+			lblYourSymbol.Text = "You are: " + _client.GetMark();
+
+			if (_client.YourTurn())
+			{
+				lblYourTurn.Show();
+			}
+			else
+			{
+				lblYourTurn.Hide();
+			}
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -50,12 +77,6 @@ namespace Tic_Tac_Toe
 			base.OnPaint(e);
 		}
 
-		private void btnQuit_Click(object sender, EventArgs e)
-		{
-			listenThread.CancelAsync();
-			Application.Exit();
-		}
-
 		private void ResetLabel(Label lbl)
 		{
 			lbl.Text = " ";
@@ -65,34 +86,22 @@ namespace Tic_Tac_Toe
 		private void btnStart_Click(object sender, EventArgs e)
 		{
 			StartGame();
-
-			// Send restart request
-			_writer?.WriteLine(RESTART_REQUEST);
-			_writer?.Flush();
 		}
 
 		private void StartGame()
 		{
 			InitializeBoard();
-			if (radO.Checked)
-			{
-				_boolPlayerTurn = false;
-				lblMessage.Text = "Waiting for player X";
-				// listen to server to indicate whether or not X made his move
-				// send received information to MakeMove to have it display the proper symbol, then wait for player to make his/her move
-				if (!listenThread.IsBusy)
-				{
-					listenThread.RunWorkerAsync();
-				}
-			}
+			_client?.Reset();
 		}
 
 		private void InitializeBoard()
 		{
+			_client?.Reset();
+
 			//Clears and Enables Labels
-			ResetLabel(lblLeft);
-			ResetLabel(lblMiddle);
-			ResetLabel(lblRight);
+			ResetLabel(lblMidLeft);
+			ResetLabel(lblMidMid);
+			ResetLabel(lblMidRight);
 			ResetLabel(lblUpperLeft);
 			ResetLabel(lblUpperMiddle);
 			ResetLabel(lblUpperRight);
@@ -101,91 +110,67 @@ namespace Tic_Tac_Toe
 			ResetLabel(lblLowerRight);
 		}
 
-		// Places X or O in the label passed to it
-		private void UpdateLabel(Label lbl)
+		private void Redraw()
 		{
-			if (!_boolPlayerTurn || _client == null)
-			{
-				return;
-			}
+			_board = _client.UpdateBoard();
 
-			if (radX.Checked)
-			{
-				lbl.Text = "X";
-			}
-			else
-			{
-				lbl.Text = "O";
-			}
-			lbl.Enabled = false;
-			if (CheckWin())
-			{
-				_bWeHaveAWinner = true;
-			}
+			lblMidLeft.Text = _board.MidLeft;
+			lblMidMid.Text = _board.MidMid;
+			lblMidRight.Text = _board.MidRight;
+			lblUpperLeft.Text = _board.TopLeft;
+			lblUpperMiddle.Text = _board.TopMid;
+			lblUpperRight.Text = _board.TopRight;
+			lblLowerLeft.Text = _board.BottomLeft;
+			lblLowerMiddle.Text = _board.BottomMid;
+			lblLowerRight.Text = _board.BottomRight;
 		}
 
 		private void lblUpperLeft_Click(object sender, EventArgs e)
 		{
-			// display appropriate symbol on screen
-			UpdateLabel(lblUpperLeft);
 			// send information to server here
-			SendInfo(1, 1, GetStringPlayerSymbol());
+			SendInfo(1, 1);
 		}
 
 		// returns a string symbol representing the symbol the user selected
-		private string GetStringPlayerSymbol()
-		{
-			if (radX.Checked)
-				return "X";
-			return "O";
-		}
 
 		private void lblUpperMiddle_Click(object sender, EventArgs e)
 		{
-			UpdateLabel(lblUpperMiddle);
-			SendInfo(1, 2, GetStringPlayerSymbol());
+			SendInfo(1, 2);
 		}
 
 		private void lblUpperRight_Click(object sender, EventArgs e)
 		{
-			UpdateLabel(lblUpperRight);
-			SendInfo(1, 3, GetStringPlayerSymbol());
+			SendInfo(1, 3);
 		}
 
 		private void lblLeft_Click(object sender, EventArgs e)
 		{
-			UpdateLabel(lblLeft);
-			SendInfo(2, 1, GetStringPlayerSymbol());
+			SendInfo(2, 1);
 		}
 
 		private void lblMiddle_Click(object sender, EventArgs e)
 		{
-			UpdateLabel(lblMiddle);
-			SendInfo(2, 2, GetStringPlayerSymbol());
+			SendInfo(2, 2);
 		}
 
 		private void lblRight_Click(object sender, EventArgs e)
 		{
-			UpdateLabel(lblRight);
-			SendInfo(2, 3, GetStringPlayerSymbol());
+			SendInfo(2, 3);
 		}
 
 		private void lblLowerLeft_Click(object sender, EventArgs e)
 		{
-			UpdateLabel(lblLowerLeft);
-			SendInfo(3, 1, GetStringPlayerSymbol());
+			SendInfo(3, 1);
 		}
 
 		private void lblLowerMiddle_Click(object sender, EventArgs e)
 		{
-			UpdateLabel(lblLowerMiddle);
-			SendInfo(3, 2, GetStringPlayerSymbol());
+			SendInfo(3, 2);
 		}
 
 		private void lblLowerRight_Click(object sender, EventArgs e)
 		{
-			UpdateLabel(lblLowerRight);
-			SendInfo(3, 3, GetStringPlayerSymbol());
+			SendInfo(3, 3);
 		}
 
 		// this procedure checks if we have a winner. A winner is determined by 
@@ -196,45 +181,14 @@ namespace Tic_Tac_Toe
 		{
 			//This will check to see it there is a winner with X's, O's, or a draw
 
-			if (lblLeft.Text == "X" && lblMiddle.Text == "X" && lblRight.Text == "X" ||
-			    lblUpperLeft.Text == "X" && lblUpperMiddle.Text == "X" && lblUpperRight.Text == "X" ||
-			    lblLowerLeft.Text == "X" && lblLowerMiddle.Text == "X" && lblLowerRight.Text == "X" ||
-			    lblLeft.Text == "X" && lblUpperLeft.Text == "X" && lblLowerLeft.Text == "X" ||
-			    lblMiddle.Text == "X" && lblUpperMiddle.Text == "X" && lblLowerMiddle.Text == "X" ||
-			    lblRight.Text == "X" && lblUpperRight.Text == "X" && lblLowerRight.Text == "X" ||
-			    lblUpperLeft.Text == "X" && lblMiddle.Text == "X" && lblLowerRight.Text == "X" ||
-			    lblUpperRight.Text == "X" && lblMiddle.Text == "X" && lblLowerLeft.Text == "X")
+			switch (_client.Winner())
 			{
-				MessageBox.Show("X is the winnder!!", "Winner", MessageBoxButtons.OK);
-				return true;
+				case GameMark.X:
+				case GameMark.O:
+					return true;
+				default:
+					return false;
 			}
-
-			if (lblLeft.Text == "O" && lblMiddle.Text == "O" && lblRight.Text == "O" ||
-			    lblUpperLeft.Text == "O" && lblUpperMiddle.Text == "O" && lblUpperRight.Text == "O" ||
-			    lblLowerLeft.Text == "O" && lblLowerMiddle.Text == "O" && lblLowerRight.Text == "O" ||
-			    lblLeft.Text == "O" && lblUpperLeft.Text == "O" && lblLowerLeft.Text == "O" ||
-			    lblMiddle.Text == "O" && lblUpperMiddle.Text == "O" && lblLowerMiddle.Text == "O" ||
-			    lblRight.Text == "O" && lblUpperRight.Text == "O" && lblLowerRight.Text == "O" ||
-			    lblUpperLeft.Text == "O" && lblMiddle.Text == "O" && lblLowerRight.Text == "O" ||
-			    lblUpperRight.Text == "O" && lblMiddle.Text == "O" && lblLowerLeft.Text == "O")
-			{
-				MessageBox.Show("O is the winner!!!", "Winner", MessageBoxButtons.OK);
-				return true;
-			}
-			if ((lblLeft.Text == "O" | lblLeft.Text == "X") &
-			    (lblMiddle.Text == "O" | lblMiddle.Text == "X") &
-			    (lblRight.Text == "O" | lblRight.Text == "X") &
-			    (lblUpperLeft.Text == "O" | lblUpperLeft.Text == "X") &
-			    (lblUpperMiddle.Text == "O" | lblUpperMiddle.Text == "X") &
-			    (lblUpperRight.Text == "O" | lblUpperRight.Text == "X") &
-			    (lblLowerLeft.Text == "O" | lblLowerLeft.Text == "X") &
-			    (lblLowerMiddle.Text == "O" | lblLowerMiddle.Text == "X") &
-			    (lblLowerRight.Text == "O" | lblLowerRight.Text == "X"))
-			{
-				MessageBox.Show("Match is a draw!!!", "Winner", MessageBoxButtons.OK);
-				return true;
-			}
-			return false;
 		}
 
 		private void Form1_Load(object sender, EventArgs e)
@@ -242,80 +196,26 @@ namespace Tic_Tac_Toe
 			InitializeBoard();
 		}
 
-		private void btnConnect_Click(object sender, EventArgs e)
-		{
-			try
-			{
-				// setup connections, sockets, streamreader and streamwriter here
-				if (_client == null)
-				{
-					_client = new TcpClient("localhost", int.Parse(txtConnectPort.Text));
-					_netStream = _client.GetStream();
-					_reader = new StreamReader(_netStream);
-					_writer = new StreamWriter(_netStream);
-					btnStart.Enabled = true;
-					StartGame();
-				}
-			}
-			catch (Exception exception)
-			{
-				Trace.TraceError(exception.Message);
-				lblMessage.Text = exception.Message;
-			}
-		}
-
 		private void btnDisconnect_Click(object sender, EventArgs e)
 		{
-			// close all variables, including network Stream, _reader and _writer
-			_reader?.Close();
-			_writer?.Close();
-			_netStream?.Close();
-			_client?.Close();
+			_client?.Stop();
 			btnStart.Enabled = false;
 			Application.Exit();
 		}
 
-		private void SendInfo(int x, int y, string playerSymbol)
+		private void SendInfo(int x, int y)
 		{
-			if (!_boolPlayerTurn || _client == null)
+			if (_client.YourTurn())
 			{
-				return;
-			}
-			// send information to server
-			_writer?.WriteLine("" + x + "," + y);
-
-			// Flush information
-			_writer?.Flush();
-
-			// End player's turn.
-			_boolPlayerTurn = false;
-			lblMessage.Text = "Waiting for other player";
-
-			// Listen for a response from the server. Assign response received to response variable
-			if (!listenThread.IsBusy)
-			{
-				listenThread.RunWorkerAsync();
-			}
-		}
-
-		// This function listens for a response sent through stream reader. Returns response back to caller
-
-		private string ListenForResponse()
-		{
-			if (_bWeHaveAWinner)
-				return "";
-			try
-			{
-				//string outputString;
-				// read the data from the host and display it
+				_client.Mark(x, y);
+				Redraw();
+				while (!_client.YourTurn())
 				{
-					// listen for a response from stream reader, then send that response back to caller
+					Thread.Sleep(1000);
 				}
+
+				Redraw();
 			}
-			catch
-			{
-			}
-			return "";
 		}
 
 		// process data received, make move displaying symbol on screen in appropriate location
@@ -330,39 +230,32 @@ namespace Tic_Tac_Toe
 		private void MarkSymbol(int x, int y)
 		{
 			if (x == 1 && y == 1)
-				MarkClientSymbol(lblUpperLeft);
+				MarkOponentSymbol(lblUpperLeft);
 			else if (x == 1 && y == 2)
-				MarkClientSymbol(lblUpperMiddle);
+				MarkOponentSymbol(lblUpperMiddle);
 			else if (x == 1 && y == 3)
-				MarkClientSymbol(lblUpperRight);
+				MarkOponentSymbol(lblUpperRight);
 			else if (x == 2 && y == 1)
-				MarkClientSymbol(lblLeft);
+				MarkOponentSymbol(lblMidLeft);
 			else if (x == 2 && y == 2)
-				MarkClientSymbol(lblMiddle);
+				MarkOponentSymbol(lblMidMid);
 			else if (x == 2 && y == 3)
-				MarkClientSymbol(lblRight);
+				MarkOponentSymbol(lblMidRight);
 			else if (x == 3 && y == 1)
-				MarkClientSymbol(lblLowerLeft);
+				MarkOponentSymbol(lblLowerLeft);
 			else if (x == 3 && y == 2)
-				MarkClientSymbol(lblLowerMiddle);
+				MarkOponentSymbol(lblLowerMiddle);
 			else if (x == 3 && y == 3)
-				MarkClientSymbol(lblLowerRight);
+				MarkOponentSymbol(lblLowerRight);
 		}
 
 		// this function is called to mark what the opponent move was. If _client O calls it, then an X is displayed on the screen
 
 		// if _client X calls it, then an O is displayed on the screen (representing what _client O move was)
 
-		private void MarkClientSymbol(Label lbl)
+		private void MarkOponentSymbol(Label lbl)
 		{
-			if (radX.Checked)
-			{
-				lbl.Text = "O"; // mark the opposite of what's checked because we're marking what the other _client checked
-			}
-			else
-			{
-				lbl.Text = "X"; // mark the opposite of what's checked because we're marking what the other _client checked
-			}
+			lbl.Text = _client.GetOponentMark();
 			lbl.Enabled = false;
 			if (CheckWin())
 			{
@@ -370,47 +263,22 @@ namespace Tic_Tac_Toe
 			}
 		}
 
-		private void radO_CheckedChanged(object sender, EventArgs e)
+		private void UpdateProgress(string format, params object[] args)
 		{
-			Trace.TraceInformation("Player set to " + (radX.Checked ? "X" : "O"));
-			// if O is checked, force the connection socket to 34
-			// not required, but guarentees that X and O players are not using the same socket to play
-			txtConnectPort.Text = "34";
+			lblMessage.Text = string.Format(format, args);
+			Trace.TraceInformation(format, args);
 		}
 
-		private void radX_CheckedChanged(object sender, EventArgs e)
-		{
-			Trace.TraceInformation("Player set to " + (radX.Checked ? "X" : "O"));
-		}
-
-		private void Listen(object sender, DoWorkEventArgs e)
+		private void txtConnectPort_TextChanged(object sender, EventArgs e)
 		{
 			try
 			{
-				listenThread.ReportProgress(0, _reader?.ReadLine());
+				_port = int.Parse(txtConnectPort.Text);
+				txtConnectPort.Text = _port.ToString();
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
-				Trace.TraceError(exception.Message);
-			}
-		}
-
-		private void UpdateProgress(object sender, ProgressChangedEventArgs e)
-		{
-			string response = (string) e.UserState;
-			lblMessage.Text = "Message recieved:" + response;
-			if (response != "")
-			{
-				if (response == RESTART_REQUEST)
-				{
-					StartGame();
-				}
-				else
-				{
-					MakeMove(response);
-					_boolPlayerTurn = true;
-					lblMessage.Text = "Your turn.";
-				}
+				txtConnectPort.Text = _port.ToString();
 			}
 		}
 	}

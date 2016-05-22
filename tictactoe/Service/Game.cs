@@ -10,16 +10,25 @@
 // 
 // =========================================================
 
-namespace TicTacToeService
+using System.Runtime.Serialization;
+using System.ServiceModel;
+
+namespace Service
 {
+	[DataContract]
 	public enum GameMark
 	{
+		[EnumMember]
 		None = 0,
+		[EnumMember]
 		X = 1,
+		[EnumMember]
 		O = 2,
+		[EnumMember]
 		Draw
 	}
 
+	[DataContract]
 	public struct GameBoard
 	{
 		private GameMark _topLeft;
@@ -32,6 +41,66 @@ namespace TicTacToeService
 		private GameMark _bottomMid;
 		private GameMark _bottomRight;
 
+		[DataMember]
+		public string TopLeft
+		{
+			get { return MarkToChar(_topLeft).ToString(); }
+		}
+
+		[DataMember]
+		public string TopMid
+		{
+			get { return MarkToChar(_topMid).ToString(); }
+		}
+
+		[DataMember]
+		public string TopRight
+		{
+			get { return MarkToChar(_topRight).ToString(); }
+		}
+
+		[DataMember]
+		public string MidLeft
+		{
+			get { return MarkToChar(_midLeft).ToString(); }
+		}
+
+		[DataMember]
+		public string MidRight
+		{
+			get { return MarkToChar(_midRight).ToString(); }
+		}
+
+		[DataMember]
+		public string MidMid
+		{
+			get { return MarkToChar(_midMid).ToString(); }
+		}
+
+		[DataMember]
+		public string BottomLeft
+		{
+			get { return MarkToChar(_bottomLeft).ToString(); }
+		}
+
+		[DataMember]
+		public string BottomMid
+		{
+			get { return MarkToChar(_bottomMid).ToString(); }
+		}
+
+		[DataMember]
+		public string BottomRight
+		{
+			get { return MarkToChar(_bottomRight).ToString(); }
+		}
+		
+		[OperationContract]
+		public static char MarkToChar(GameMark mark)
+		{
+			return mark == GameMark.X ? 'X' : mark == GameMark.O ? 'O' : ' ';
+		}
+		
 		public void Clear()
 		{
 			_topLeft =
@@ -124,7 +193,7 @@ namespace TicTacToeService
 					return false;
 			}
 		}
-
+		
 		public GameMark Winner()
 		{
 			GameMark[] winMarks = new[] {GameMark.X, GameMark.O};

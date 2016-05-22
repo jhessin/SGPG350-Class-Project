@@ -11,11 +11,13 @@ namespace ServerTicTacToe
 	public partial class ServerWindow : Form
 	{
 		private Server _server;
+		private int _port;
 
         public ServerWindow()
         {
             InitializeComponent();
 			_server = new Server(ReportProgress);
+	        _port = 32;
         }
 
 		private void ReportProgress(string format, object[] args)
@@ -42,11 +44,12 @@ namespace ServerTicTacToe
 		{
 			try
 			{
-				tbPort.Text = int.Parse(tbPort.Text).ToString();
+				_port = int.Parse(tbPort.Text);
+				tbPort.Text = _port.ToString();
 			}
 			catch (Exception)
 			{
-				tbPort.Text = "35";
+				tbPort.Text = _port.ToString();
 			}
 		}
 	}

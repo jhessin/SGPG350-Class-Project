@@ -18,13 +18,6 @@ using Tic_Tac_Toe.ServiceReference1;
 
 namespace Tic_Tac_Toe
 {
-	internal class ServiceDelegate : TicTacToeCallback
-	{
-		public void Progress(string format, object[] args)
-		{
-		}
-	}
-
 //------------------------------------------------------------------------
 // Name:  Client
 //
@@ -33,9 +26,12 @@ namespace Tic_Tac_Toe
 //---------------------------------------------------------------------------
 	public class Client
 	{
-		// Delegates and Network variables
-		private readonly ProgressDelegate _callback;
+		private static ProgressDelegate _callback;
 		private TicTacToeClient _client;
+		private static GameBoard _board;
+		private static GameMark _playerSymbol;
+		private static GameMark _turn;
+		private static GameMark _winMark;
 
 		// flags
 		private bool _connected;
@@ -75,53 +71,22 @@ namespace Tic_Tac_Toe
 
 		public string GetMark()
 		{
-			try
-			{
-				return _client.GetSymbol() == GameMark.X ? "X" : "O";
-			}
-			catch (Exception e)
-			{
-				_callback("Error: {0}", e.Message);
-				return "";
-			}
+				return _playerSymbol == GameMark.X ? "X" : "O";
 		}
 
 		public string GetOponentMark()
 		{
-			try
-			{
-				return _client.GetSymbol() == GameMark.X ? "O" : "X";
-			}
-			catch (Exception e)
-			{
-				_callback("Error: {0}", e.Message);
-				return "";
-			}
+				return _playerSymbol == GameMark.X ? "O" : "X";
 		}
 
 		public bool YourTurn()
 		{
-			try
-			{
-				return _client.GetSymbol() == _client.GetTurn();
-			}
-			catch (Exception e)
-			{
-				_callback("Error: {0}", e.Message);
-				return false;
-			}
+			return _playerSymbol == _turn;
 		}
 
 		public GameBoard UpdateBoard()
 		{
-			try
-			{
-				return _client.Update();
-			}
-			catch (Exception)
-			{
-				return new GameBoard();
-			}
+				return _board;
 		}
 
 		public void Mark(int x, int y)
@@ -158,9 +123,38 @@ namespace Tic_Tac_Toe
 		{
 			if (_connected)
 			{
-				return _client.Winner();
+				return _winMark;
 			}
 			return GameMark.None;
+		}
+
+		// Delegates and Network variables
+		private class ServiceDelegate : TicTacToeCallback
+		{
+			public void Progress(string format, object[] args)
+			{
+				_callback(format, args);
+			}
+
+			public void UpdateBoard(GameBoard board)
+			{
+				_board = board;
+			}
+
+			public void SetSymbol(GameMark symbol)
+			{
+				_playerSymbol = symbol;
+			}
+
+			public void SetTurn(GameMark symbol)
+			{
+				_turn = symbol;
+			}
+
+			public void Winner(GameMark winMark)
+			{
+				_winMark = winMark;
+			}
 		}
 	}
 }

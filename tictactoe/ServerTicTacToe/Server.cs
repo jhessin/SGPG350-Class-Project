@@ -14,6 +14,7 @@ using System;
 using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using ServerTicTacToe.ServiceReference2;
 using Service;
 
 namespace ServerTicTacToe
@@ -35,8 +36,9 @@ namespace ServerTicTacToe
 		private bool _active;
 		// The network variables.
 		private ServiceHost _host;
+		private TicTacToeClient _callbackClient;
 
-		private class ProgressCallback : IServiceCallback
+		private class ProgressCallback : TicTacToeCallback
 		{
 			private readonly ProgressDelegate _progress;
 
@@ -48,6 +50,22 @@ namespace ServerTicTacToe
 			public void Progress(string format, params object[] args)
 			{
 				_progress(format, args);
+			}
+
+			public void UpdateBoard(GameBoard board)
+			{
+			}
+
+			public void SetSymbol(GameMark symbol)
+			{
+			}
+
+			public void SetTurn(GameMark symbol)
+			{
+			}
+
+			public void Winner(GameMark winMark)
+			{
 			}
 		}
 
@@ -92,6 +110,12 @@ namespace ServerTicTacToe
 				_host.Open();
 
 				// Create client to assign the progress delegate.
+				_callbackClient = new TicTacToeClient(new InstanceContext(_callback),
+					new NetTcpBinding(),
+					new EndpointAddress("net.tcp://localhost:" + port));
+				
+				_callbackClient.SetServerCallback();
+				/*
 				DuplexChannelFactory<IService1> scf;
 				scf = new DuplexChannelFactory<IService1>(_callback,
 					new NetTcpBinding(),
@@ -100,12 +124,14 @@ namespace ServerTicTacToe
 				IService1 s = scf.CreateChannel();
 				
 				(s as ICommunicationObject)?.Close();
+				*/
 
 				_callback.Progress("Service Started on port {0}", port);
 			}
 			catch (Exception ce)
 			{
 				ReportException(ce);
+				_callbackClient?.Abort();
 				_host.Abort();
 				_active = false;
 			}
@@ -115,7 +141,8 @@ namespace ServerTicTacToe
 		{
 			if (_active)
 			{
-				_host.Close();
+				_callbackClient?.Close();
+				_host?.Close();
 				_callback.Progress("Service Stopped");
 				_active = false;
 			}

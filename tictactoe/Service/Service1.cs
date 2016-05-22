@@ -11,69 +11,47 @@ namespace Service
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
 	public class Service1 : IService1
 	{
-		private static GameBoard _board;
+		private static GameBoard _board = new GameBoard();
+		private static IServiceCallback Callback => OperationContext.Current.GetCallbackChannel<IServiceCallback>();
+		private static IServiceCallback _serverCallback;
 		private static int _turn;
-		private static readonly GameMark[] _players = { GameMark.X, GameMark.O };
+		private static readonly GameMark[] Players = { GameMark.X, GameMark.O };
 		private static int _numPlayers;
-		private readonly int _playerNumber;
 
 		public Service1()
 		{
-			_playerNumber = _numPlayers;
-			_numPlayers = ++_numPlayers % 2;
+			Callback.SetSymbol(Players[++_numPlayers%Players.Length]);
+			Callback.SetTurn(Players[_turn]);
+			Callback.UpdateBoard(_board);
 		}
 
-		private static IServiceCallback callback => OperationContext.Current.GetCallbackChannel<IServiceCallback>();
-
-		public GameMark GetSymbol()
+		public void SetServerCallback()
 		{
-			return GetSymbol(_playerNumber);
-		}
-
-		private GameMark GetSymbol(int turn)
-		{
-			if (turn >= 0 && turn < _players.Length)
-			{
-				callback?.Progress("Sending Sybol for client {0}: {1}", turn, GameBoard.MarkToChar(_players[_playerNumber]));
-				return _players[turn];
-			}
-			return GameMark.None;
-		}
-
-		public GameMark GetTurn()
-		{
-			return GetSymbol(_turn);
+			_serverCallback = Callback;
 		}
 
 		public void Mark(int x, int y)
 		{
-			if (_board.Mark(_players[_turn], x, y))
+			if (_board.Mark(Players[_turn], x, y))
 			{
-				callback?.Progress("Marking {0} at {1}, {2}", GameBoard.MarkToChar(_players[_turn]), x, y);
+				_serverCallback?.Progress("Marking {0} at {1}, {2}", GameBoard.MarkToChar(Players[_turn]), x, y);
+				Callback.UpdateBoard(_board);
+				Callback.Winner(_board.Winner());
 				NextTurn();
 			}
 		}
 
-		public GameBoard Update()
-		{
-			callback?.Progress("Updating board");
-			return _board;
-		}
-
-		public GameMark Winner()
-		{
-			return _board.Winner();
-		}
-
 		public void Reset()
 		{
-			callback?.Progress("Clearing the board");
+			_serverCallback?.Progress("Clearing the board");
 			_board.Clear();
+			Callback.UpdateBoard(_board);
 		}
 
 		private void NextTurn()
 		{
 			_turn = ++_turn % 2;
+			Callback.SetTurn(Players[_turn]);
 		}
 	}
 }

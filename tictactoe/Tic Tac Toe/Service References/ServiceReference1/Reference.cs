@@ -13,23 +13,6 @@ namespace Tic_Tac_Toe.ServiceReference1 {
     using System;
     
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="GameMark", Namespace="http://schemas.datacontract.org/2004/07/Service")]
-    public enum GameMark : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        None = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        X = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        O = 2,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Draw = 3,
-    }
-    
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="GameBoard", Namespace="http://schemas.datacontract.org/2004/07/Service")]
@@ -202,39 +185,41 @@ namespace Tic_Tac_Toe.ServiceReference1 {
         }
     }
     
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="GameMark", Namespace="http://schemas.datacontract.org/2004/07/Service")]
+    public enum GameMark : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        None = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        X = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        O = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Draw = 3,
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference1.TicTacToe", CallbackContract=typeof(Tic_Tac_Toe.ServiceReference1.TicTacToeCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
     public interface TicTacToe {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/TicTacToe/GetSymbol", ReplyAction="http://tempuri.org/TicTacToe/GetSymbolResponse")]
-        Tic_Tac_Toe.ServiceReference1.GameMark GetSymbol();
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/SetServerCallback")]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Tic_Tac_Toe.ServiceReference1.GameBoard))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Tic_Tac_Toe.ServiceReference1.GameMark))]
+        void SetServerCallback(object callback);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/TicTacToe/GetSymbol", ReplyAction="http://tempuri.org/TicTacToe/GetSymbolResponse")]
-        System.Threading.Tasks.Task<Tic_Tac_Toe.ServiceReference1.GameMark> GetSymbolAsync();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/TicTacToe/GetTurn", ReplyAction="http://tempuri.org/TicTacToe/GetTurnResponse")]
-        Tic_Tac_Toe.ServiceReference1.GameMark GetTurn();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/TicTacToe/GetTurn", ReplyAction="http://tempuri.org/TicTacToe/GetTurnResponse")]
-        System.Threading.Tasks.Task<Tic_Tac_Toe.ServiceReference1.GameMark> GetTurnAsync();
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/SetServerCallback")]
+        System.Threading.Tasks.Task SetServerCallbackAsync(object callback);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/Mark")]
         void Mark(int x, int y);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/Mark")]
         System.Threading.Tasks.Task MarkAsync(int x, int y);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/TicTacToe/Update", ReplyAction="http://tempuri.org/TicTacToe/UpdateResponse")]
-        Tic_Tac_Toe.ServiceReference1.GameBoard Update();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/TicTacToe/Update", ReplyAction="http://tempuri.org/TicTacToe/UpdateResponse")]
-        System.Threading.Tasks.Task<Tic_Tac_Toe.ServiceReference1.GameBoard> UpdateAsync();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/TicTacToe/Winner", ReplyAction="http://tempuri.org/TicTacToe/WinnerResponse")]
-        Tic_Tac_Toe.ServiceReference1.GameMark Winner();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/TicTacToe/Winner", ReplyAction="http://tempuri.org/TicTacToe/WinnerResponse")]
-        System.Threading.Tasks.Task<Tic_Tac_Toe.ServiceReference1.GameMark> WinnerAsync();
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/Reset")]
         void Reset();
@@ -247,10 +232,22 @@ namespace Tic_Tac_Toe.ServiceReference1 {
     public interface TicTacToeCallback {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/Progress")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Tic_Tac_Toe.ServiceReference1.GameMark))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Tic_Tac_Toe.ServiceReference1.GameBoard))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Tic_Tac_Toe.ServiceReference1.GameBoard))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Tic_Tac_Toe.ServiceReference1.GameMark))]
         void Progress(string format, object[] args);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/UpdateBoard")]
+        void UpdateBoard(Tic_Tac_Toe.ServiceReference1.GameBoard board);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/SetSymbol")]
+        void SetSymbol(Tic_Tac_Toe.ServiceReference1.GameMark symbol);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/SetTurn")]
+        void SetTurn(Tic_Tac_Toe.ServiceReference1.GameMark symbol);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/TicTacToe/Winner")]
+        void Winner(Tic_Tac_Toe.ServiceReference1.GameMark winMark);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -281,20 +278,12 @@ namespace Tic_Tac_Toe.ServiceReference1 {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public Tic_Tac_Toe.ServiceReference1.GameMark GetSymbol() {
-            return base.Channel.GetSymbol();
+        public void SetServerCallback(object callback) {
+            base.Channel.SetServerCallback(callback);
         }
         
-        public System.Threading.Tasks.Task<Tic_Tac_Toe.ServiceReference1.GameMark> GetSymbolAsync() {
-            return base.Channel.GetSymbolAsync();
-        }
-        
-        public Tic_Tac_Toe.ServiceReference1.GameMark GetTurn() {
-            return base.Channel.GetTurn();
-        }
-        
-        public System.Threading.Tasks.Task<Tic_Tac_Toe.ServiceReference1.GameMark> GetTurnAsync() {
-            return base.Channel.GetTurnAsync();
+        public System.Threading.Tasks.Task SetServerCallbackAsync(object callback) {
+            return base.Channel.SetServerCallbackAsync(callback);
         }
         
         public void Mark(int x, int y) {
@@ -303,22 +292,6 @@ namespace Tic_Tac_Toe.ServiceReference1 {
         
         public System.Threading.Tasks.Task MarkAsync(int x, int y) {
             return base.Channel.MarkAsync(x, y);
-        }
-        
-        public Tic_Tac_Toe.ServiceReference1.GameBoard Update() {
-            return base.Channel.Update();
-        }
-        
-        public System.Threading.Tasks.Task<Tic_Tac_Toe.ServiceReference1.GameBoard> UpdateAsync() {
-            return base.Channel.UpdateAsync();
-        }
-        
-        public Tic_Tac_Toe.ServiceReference1.GameMark Winner() {
-            return base.Channel.Winner();
-        }
-        
-        public System.Threading.Tasks.Task<Tic_Tac_Toe.ServiceReference1.GameMark> WinnerAsync() {
-            return base.Channel.WinnerAsync();
         }
         
         public void Reset() {

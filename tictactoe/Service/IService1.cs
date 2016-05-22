@@ -22,41 +22,212 @@ namespace Service
 		CallbackContract = typeof (IServiceCallback))]
 	public interface IService1
 	{
-		[OperationContract(IsOneWay = false)]
-		GameMark GetSymbol();
-
-		[OperationContract(IsOneWay = false)]
-		GameMark GetTurn();
+		[OperationContract(IsOneWay = true)]
+		void SetServerCallback();
 
 		[OperationContract(IsOneWay = true)]
 		void Mark(int x, int y);
 
-		[OperationContract(IsOneWay = false)]
-		GameBoard Update();
-
-		[OperationContract(IsOneWay = false)]
-		GameMark Winner();
-
 		[OperationContract(IsOneWay = true)]
 		void Reset();
 	}
-
-	[ServiceContract]
+	
 	public interface IServiceCallback
 	{
-		// Use a data contract as illustrated in the sample below to add composite types to service operations.
-		// You can add XSD files into the project. After building the project, you can directly use the data types defined there, with the namespace "Service.ContractType".
 		[OperationContract(IsOneWay = true)]
 		void Progress(string format, params object[] args);
+
+		[OperationContract(IsOneWay = true)]
+		void UpdateBoard(GameBoard board);
+
+		[OperationContract(IsOneWay = true)]
+		void SetSymbol(GameMark symbol);
+
+		[OperationContract(IsOneWay = true)]
+		void SetTurn(GameMark symbol);
+
+		[OperationContract(IsOneWay = true)]
+		void Winner(GameMark winMark);
 	}
 
 	[DataContract]
-	public class CompositeType
+	public enum GameMark
 	{
-		[DataMember]
-		public bool BoolValue { get; set; } = true;
+		[EnumMember]
+		None = 0,
+		[EnumMember]
+		X = 1,
+		[EnumMember]
+		O = 2,
+		[EnumMember]
+		Draw
+	}
+
+	[DataContract]
+	public struct GameBoard
+	{
+		private GameMark _topLeft;
+		private GameMark _topMid;
+		private GameMark _topRight;
+		private GameMark _midLeft;
+		private GameMark _midMid;
+		private GameMark _midRight;
+		private GameMark _bottomLeft;
+		private GameMark _bottomMid;
+		private GameMark _bottomRight;
 
 		[DataMember]
-		public string StringValue { get; set; } = "Hello ";
+		public string TopLeft => MarkToChar(_topLeft).ToString();
+
+		[DataMember]
+		public string TopMid => MarkToChar(_topMid).ToString();
+
+		[DataMember]
+		public string TopRight => MarkToChar(_topRight).ToString();
+
+		[DataMember]
+		public string MidLeft => MarkToChar(_midLeft).ToString();
+
+		[DataMember]
+		public string MidRight => MarkToChar(_midRight).ToString();
+
+		[DataMember]
+		public string MidMid => MarkToChar(_midMid).ToString();
+
+		[DataMember]
+		public string BottomLeft => MarkToChar(_bottomLeft).ToString();
+
+		[DataMember]
+		public string BottomMid => MarkToChar(_bottomMid).ToString();
+
+		[DataMember]
+		public string BottomRight => MarkToChar(_bottomRight).ToString();
+
+		[OperationContract]
+		public static char MarkToChar(GameMark mark)
+		{
+			return mark == GameMark.X ? 'X' : mark == GameMark.O ? 'O' : ' ';
+		}
+
+		public void Clear()
+		{
+			_topLeft =
+				_topMid = _topRight = _midLeft = _midMid = _midRight = _bottomLeft = _bottomMid = _bottomRight = GameMark.None;
+		}
+
+		public bool Mark(GameMark symbol, int x, int y)
+		{
+			switch (x)
+			{
+				case 1:
+					switch (y)
+					{
+						case 1:
+							if (_topLeft == GameMark.None)
+							{
+								_topLeft = symbol;
+								return true;
+							}
+							return false;
+						case 2:
+							if (_midLeft == GameMark.None)
+							{
+								_midLeft = symbol;
+								return true;
+							}
+							return false;
+						case 3:
+							if (_bottomLeft == GameMark.None)
+							{
+								_bottomLeft = symbol;
+								return true;
+							}
+							return false;
+					}
+					return false;
+				case 2:
+					switch (y)
+					{
+						case 1:
+							if (_topMid == GameMark.None)
+							{
+								_topMid = symbol;
+								return true;
+							}
+							return false;
+						case 2:
+							if (_midMid == GameMark.None)
+							{
+								_midMid = symbol;
+								return true;
+							}
+							return false;
+						case 3:
+							if (_bottomMid == GameMark.None)
+							{
+								_bottomMid = symbol;
+								return true;
+							}
+							return false;
+					}
+					return false;
+				case 3:
+					switch (y)
+					{
+						case 1:
+							if (_topRight == GameMark.None)
+							{
+								_topRight = symbol;
+								return true;
+							}
+							return false;
+						case 2:
+							if (_midRight == GameMark.None)
+							{
+								_midRight = symbol;
+								return true;
+							}
+							return false;
+						case 3:
+							if (_bottomRight == GameMark.None)
+							{
+								_bottomRight = symbol;
+								return true;
+							}
+							return false;
+					}
+					return false;
+				default:
+					return false;
+			}
+		}
+
+		[OperationContract]
+		public GameMark Winner()
+		{
+			GameMark[] winMarks = new[] { GameMark.X, GameMark.O };
+			foreach (GameMark winMark in winMarks)
+			{
+				if (_topLeft == winMark && _topMid == winMark && _topRight == winMark ||
+					_midLeft == winMark && _midMid == winMark && _midRight == winMark ||
+					_bottomLeft == winMark && _bottomMid == winMark && _bottomRight == winMark ||
+					_topLeft == winMark && _midLeft == winMark && _bottomLeft == winMark ||
+					_topMid == winMark && _midMid == winMark && _bottomMid == winMark ||
+					_topRight == winMark && _midRight == winMark && _bottomRight == winMark ||
+					_topLeft == winMark && _midMid == winMark && _bottomRight == winMark ||
+					_bottomLeft == winMark && _midMid == winMark && _topRight == winMark)
+				{
+					return winMark;
+				}
+			}
+			if (_topLeft != GameMark.None && _topMid != GameMark.None && _topRight != GameMark.None &&
+				_midLeft != GameMark.None && _midMid != GameMark.None && _midRight != GameMark.None &&
+				_bottomLeft != GameMark.None && _bottomMid != GameMark.None && _bottomRight != GameMark.None)
+			{
+				return GameMark.Draw;
+			}
+
+			return GameMark.None;
+		}
 	}
 }

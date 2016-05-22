@@ -214,7 +214,7 @@ namespace Tic_Tac_Toe
 			this.txtConnectPort.Name = "txtConnectPort";
 			this.txtConnectPort.Size = new System.Drawing.Size(43, 20);
 			this.txtConnectPort.TabIndex = 19;
-			this.txtConnectPort.Text = "33";
+			this.txtConnectPort.Text = "34";
 			this.txtConnectPort.TextChanged += new System.EventHandler(this.txtConnectPort_TextChanged);
 			// 
 			// lblMessage

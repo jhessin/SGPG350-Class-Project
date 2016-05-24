@@ -3,16 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tic Tac Toe", "Tic Tac Toe\Tic Tac Toe.csproj", "{CA8E82E9-52FF-4A1F-87FB-D1375264C69A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToeClient", "Tic Tac Toe\TicTacToeClient.csproj", "{CA8E82E9-52FF-4A1F-87FB-D1375264C69A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3EAD8030-EC49-45DC-9B04-51C1E6DD8D2E} = {3EAD8030-EC49-45DC-9B04-51C1E6DD8D2E}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerTicTacToe", "ServerTicTacToe\ServerTicTacToe.csproj", "{1BB6DB07-8CEF-4A46-AF08-F4A6545DEB35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToeServer", "ServerTicTacToe\TicTacToeServer.csproj", "{1BB6DB07-8CEF-4A46-AF08-F4A6545DEB35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiDebug", "MultiDebug\MultiDebug.csproj", "{5CBDF778-FEBA-4BDA-92C1-7EF32C6537C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{3EAD8030-EC49-45DC-9B04-51C1E6DD8D2E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToeService", "Service\TicTacToeService.csproj", "{3EAD8030-EC49-45DC-9B04-51C1E6DD8D2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

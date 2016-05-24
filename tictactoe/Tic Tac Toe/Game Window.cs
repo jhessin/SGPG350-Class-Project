@@ -15,7 +15,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using Tic_Tac_Toe.ServiceReference1;
+using Tic_Tac_Toe.TicTacToeService;
 
 namespace Tic_Tac_Toe
 {
@@ -49,7 +49,7 @@ namespace Tic_Tac_Toe
 				return;
 			}
 
-			_client.Start(int.Parse(txtConnectPort.Text));
+			_client.Start();
 			btnStart.Enabled = _connected = true;
 
 			lblYourSymbol.Text = "You are: " + _client.GetMark();
@@ -268,18 +268,6 @@ namespace Tic_Tac_Toe
 			lblMessage.Text = string.Format(format, args);
 			Trace.TraceInformation(format, args);
 		}
-
-		private void txtConnectPort_TextChanged(object sender, EventArgs e)
-		{
-			try
-			{
-				_port = int.Parse(txtConnectPort.Text);
-				txtConnectPort.Text = _port.ToString();
-			}
-			catch (Exception)
-			{
-				txtConnectPort.Text = _port.ToString();
-			}
-		}
+		
 	}
 }

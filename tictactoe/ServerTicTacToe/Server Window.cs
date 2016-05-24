@@ -22,7 +22,6 @@ namespace ServerTicTacToe
 
 		private void ReportProgress(string format, object[] args)
 		{
-			lblMessage.Text = string.Format(format, args);
 			Trace.TraceInformation(format, args);
 		}
 
@@ -30,7 +29,7 @@ namespace ServerTicTacToe
 		{
 			// Instantiate client 1 and client 2 threads. Assign ListenToClient1 to thread 1 and ListenToClient2 to thread 2
 			// remember, thread names are client1 and client2
-			_server.Start(int.Parse(tbPort.Text));
+			_server.Start();
 			btnStartListening.Enabled = false;
 		}
 
@@ -39,18 +38,5 @@ namespace ServerTicTacToe
 			_server.Stop();
 			btnStartListening.Enabled = true;
         }
-
-		private void tbPort_TextChanged(object sender, EventArgs e)
-		{
-			try
-			{
-				_port = int.Parse(tbPort.Text);
-				tbPort.Text = _port.ToString();
-			}
-			catch (Exception)
-			{
-				tbPort.Text = _port.ToString();
-			}
-		}
 	}
 }

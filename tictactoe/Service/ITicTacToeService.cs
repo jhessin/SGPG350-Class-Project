@@ -1,6 +1,6 @@
 ﻿// ========================================================
 // 
-//   File Name:   IService1.cs
+//   File Name:   ITicTacToeService.cs
 // 
 //   Author:  Jim Hessin
 // 
@@ -13,17 +13,18 @@
 using System.Runtime.Serialization;
 using System.ServiceModel;
 
-namespace Service
+namespace TicTacToe.Service
 {
-	// NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IService1" in both code and config file together.
+	// NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "ITicTacToeService" in both code and config file together.
 	[ServiceContract(
 		Name = "TicTacToe",
+		Namespace = "TicTacToe.Service",
 		SessionMode = SessionMode.Required,
 		CallbackContract = typeof (IServiceCallback))]
-	public interface IService1
+	public interface ITicTacToeService
 	{
 		[OperationContract(IsOneWay = true)]
-		void SetServerCallback();
+		void Register();
 
 		[OperationContract(IsOneWay = true)]
 		void Mark(int x, int y);
@@ -31,17 +32,18 @@ namespace Service
 		[OperationContract(IsOneWay = true)]
 		void Reset();
 	}
-	
+
+	[ServiceContract]
 	public interface IServiceCallback
 	{
 		[OperationContract(IsOneWay = true)]
 		void Progress(string format, params object[] args);
 
 		[OperationContract(IsOneWay = true)]
-		void UpdateBoard(GameBoard board);
+		void SetPlayerMark(GameMark mark);
 
 		[OperationContract(IsOneWay = true)]
-		void SetSymbol(GameMark symbol);
+		void UpdateBoard(GameBoard board);
 
 		[OperationContract(IsOneWay = true)]
 		void SetTurn(GameMark symbol);
@@ -60,7 +62,7 @@ namespace Service
 		[EnumMember]
 		O = 2,
 		[EnumMember]
-		Draw
+		Draw = 3
 	}
 
 	[DataContract]
@@ -102,8 +104,7 @@ namespace Service
 
 		[DataMember]
 		public string BottomRight => MarkToChar(_bottomRight).ToString();
-
-		[OperationContract]
+		
 		public static char MarkToChar(GameMark mark)
 		{
 			return mark == GameMark.X ? 'X' : mark == GameMark.O ? 'O' : ' ';
@@ -202,7 +203,6 @@ namespace Service
 			}
 		}
 
-		[OperationContract]
 		public GameMark Winner()
 		{
 			GameMark[] winMarks = new[] { GameMark.X, GameMark.O };

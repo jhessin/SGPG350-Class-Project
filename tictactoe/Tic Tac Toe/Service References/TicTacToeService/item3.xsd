@@ -1,6 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Service" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Service" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/TicTacToe.Service" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/TicTacToe.Service" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8080/TicTacToe/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:simpleType name="GameMark">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="X" />
+      <xs:enumeration value="O" />
+      <xs:enumeration value="Draw" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="GameMark" nillable="true" type="tns:GameMark" />
   <xs:complexType name="GameBoard">
     <xs:annotation>
       <xs:appinfo>
@@ -20,13 +29,4 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="GameBoard" nillable="true" type="tns:GameBoard" />
-  <xs:simpleType name="GameMark">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="None" />
-      <xs:enumeration value="X" />
-      <xs:enumeration value="O" />
-      <xs:enumeration value="Draw" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="GameMark" nillable="true" type="tns:GameMark" />
 </xs:schema>

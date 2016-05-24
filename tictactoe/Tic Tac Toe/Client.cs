@@ -14,7 +14,7 @@ using System;
 using System.ServiceModel;
 using System.Threading;
 using ServerTicTacToe;
-using Tic_Tac_Toe.ServiceReference1;
+using Tic_Tac_Toe.TicTacToeService;
 
 namespace Tic_Tac_Toe
 {
@@ -24,7 +24,7 @@ namespace Tic_Tac_Toe
 // Description: Connects to server and handles all communications.
 //
 //---------------------------------------------------------------------------
-	public class Client
+	public class Client : TicTacToeCallback
 	{
 		private static ProgressDelegate _callback;
 		private TicTacToeClient _client;
@@ -44,7 +44,7 @@ namespace Tic_Tac_Toe
 			_connected = false;
 		}
 
-		public void Start(int port)
+		public void Start()
 		{
 			if (_connected)
 			{
@@ -56,27 +56,54 @@ namespace Tic_Tac_Toe
 			try
 			{
 				_client = new TicTacToeClient(
-					new InstanceContext(new ServiceDelegate()),
-					new NetTcpBinding(),
-					new EndpointAddress("net.tcp://localhost:" + port));
-				_callback("Connected. Player {0}", GetMark());
+					new InstanceContext(this),
+					"WSDualHttpBinding_TicTacToe");
+				_client.Open();
+
+				_client.Register();
+
+				Thread.Sleep(5000);
+
+//				if (_playerSymbol == GameMark.None)
+//				{
+//					_callback("Server full!");
+//					_client.Close();
+//					_connected = false;
+//				}
 			}
 			catch (Exception e)
 			{
 				_callback("An exception occured: {0}", e.Message);
-				_client?.Close();
+				_client?.Abort();
 				_connected = false;
 			}
 		}
 
 		public string GetMark()
 		{
-				return _playerSymbol == GameMark.X ? "X" : "O";
+			switch (_playerSymbol)
+			{
+				case GameMark.X:
+					return "X";
+				case GameMark.O:
+					return "O";
+				default:
+					return "None";
+			}
+
 		}
 
 		public string GetOponentMark()
 		{
-				return _playerSymbol == GameMark.X ? "O" : "X";
+			switch (_playerSymbol)
+			{
+				case GameMark.O:
+					return "X";
+				case GameMark.X:
+					return "O";
+				default:
+					return " ";
+			}
 		}
 
 		public bool YourTurn()
@@ -128,33 +155,29 @@ namespace Tic_Tac_Toe
 			return GameMark.None;
 		}
 
-		// Delegates and Network variables
-		private class ServiceDelegate : TicTacToeCallback
+		public void Progress(string format, object[] args)
 		{
-			public void Progress(string format, object[] args)
-			{
-				_callback(format, args);
-			}
+			_callback(format, args);
+		}
 
-			public void UpdateBoard(GameBoard board)
-			{
-				_board = board;
-			}
+		public void SetPlayerMark(GameMark mark)
+		{
+			_playerSymbol = mark;
+		}
 
-			public void SetSymbol(GameMark symbol)
-			{
-				_playerSymbol = symbol;
-			}
+		public void UpdateBoard(GameBoard board)
+		{
+			_board = board;
+		}
 
-			public void SetTurn(GameMark symbol)
-			{
-				_turn = symbol;
-			}
+		public void SetTurn(GameMark symbol)
+		{
+			_turn = symbol;
+		}
 
-			public void Winner(GameMark winMark)
-			{
-				_winMark = winMark;
-			}
+		public void Winner(GameMark winMark)
+		{
+			_winMark = winMark;
 		}
 	}
 }

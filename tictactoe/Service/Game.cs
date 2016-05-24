@@ -13,7 +13,7 @@
 using System.Runtime.Serialization;
 using System.ServiceModel;
 
-namespace Service
+namespace TicTacToe.Service
 {
 	
 

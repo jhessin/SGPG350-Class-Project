@@ -37,20 +37,22 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MultiFormContext.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ServerTicTacToe\ServerTicTacToe.csproj">
+    <ProjectReference Include="..\ServerTicTacToe\TicTacToeServer.csproj">
       <Project>{1bb6db07-8cef-4a46-af08-f4a6545deb35}</Project>
-      <Name>ServerTicTacToe</Name>
+      <Name>TicTacToeServer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Tic Tac Toe\Tic Tac Toe.csproj">
+    <ProjectReference Include="..\Tic Tac Toe\TicTacToeClient.csproj">
       <Project>{ca8e82e9-52ff-4a1f-87fb-d1375264c69a}</Project>
-      <Name>Tic Tac Toe</Name>
+      <Name>TicTacToeClient</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

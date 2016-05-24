@@ -25,8 +25,6 @@ namespace Tic_Tac_Toe
 			this.lblLowerRight = new System.Windows.Forms.Label();
 			this.btnStart = new System.Windows.Forms.Button();
 			this.btnConnect = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.txtConnectPort = new System.Windows.Forms.TextBox();
 			this.lblMessage = new System.Windows.Forms.Label();
 			this.btnDisconnect = new System.Windows.Forms.Button();
 			this.File = new System.Windows.Forms.MenuStrip();
@@ -191,31 +189,13 @@ namespace Tic_Tac_Toe
 			// 
 			// btnConnect
 			// 
-			this.btnConnect.Location = new System.Drawing.Point(150, 438);
+			this.btnConnect.Location = new System.Drawing.Point(12, 438);
 			this.btnConnect.Name = "btnConnect";
 			this.btnConnect.Size = new System.Drawing.Size(76, 35);
 			this.btnConnect.TabIndex = 17;
 			this.btnConnect.Text = "Connect";
 			this.btnConnect.UseVisualStyleBackColor = true;
 			this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(1, 448);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(77, 13);
-			this.label1.TabIndex = 18;
-			this.label1.Text = "Connet to port:";
-			// 
-			// txtConnectPort
-			// 
-			this.txtConnectPort.Location = new System.Drawing.Point(84, 446);
-			this.txtConnectPort.Name = "txtConnectPort";
-			this.txtConnectPort.Size = new System.Drawing.Size(43, 20);
-			this.txtConnectPort.TabIndex = 19;
-			this.txtConnectPort.Text = "34";
-			this.txtConnectPort.TextChanged += new System.EventHandler(this.txtConnectPort_TextChanged);
 			// 
 			// lblMessage
 			// 
@@ -311,8 +291,6 @@ namespace Tic_Tac_Toe
 			this.Controls.Add(this.lblYourSymbol);
 			this.Controls.Add(this.btnDisconnect);
 			this.Controls.Add(this.lblMessage);
-			this.Controls.Add(this.txtConnectPort);
-			this.Controls.Add(this.label1);
 			this.Controls.Add(this.btnConnect);
 			this.Controls.Add(this.btnStart);
 			this.Controls.Add(this.lblLowerRight);
@@ -368,8 +346,6 @@ namespace Tic_Tac_Toe
         private System.Windows.Forms.Label lblLowerRight;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnConnect;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtConnectPort;
         private System.Windows.Forms.Label lblMessage;
         private System.Windows.Forms.Button btnDisconnect;
 		private System.Windows.Forms.MenuStrip File;

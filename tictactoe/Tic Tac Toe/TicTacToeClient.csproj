@@ -101,20 +101,20 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Service References\TicTacToeService\item.wsdl" />
-    <None Include="Service References\TicTacToeService\item.xsd">
+    <None Include="Service References\TicTacToeService\Arrays.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\TicTacToeService\item1.xsd">
+    <None Include="Service References\TicTacToeService\service.wsdl" />
+    <None Include="Service References\TicTacToeService\service.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\TicTacToeService\item2.xsd">
+    <None Include="Service References\TicTacToeService\TicTacToe.Service.wsdl" />
+    <None Include="Service References\TicTacToeService\TicTacToe.Service.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\TicTacToeService\item3.xsd">
+    <None Include="Service References\TicTacToeService\TicTacToe.Service1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\TicTacToeService\TicTacToeService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
@@ -149,9 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\TicTacToeService\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\TicTacToeService\item.disco" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\TicTacToeService\configuration91.svcinfo" />

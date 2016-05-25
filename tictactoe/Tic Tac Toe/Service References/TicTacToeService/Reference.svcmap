@@ -19,16 +19,15 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:8080/TicTacToe/" Protocol="http" SourceId="1" />
+    <MetadataSource Address="net.tcp://localhost:8080/TicTacToe/mex" Protocol="mex" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="item.disco" MetadataType="Disco" ID="2a72230f-e4e3-4107-8b82-058b2c28d293" SourceId="1" SourceUrl="http://localhost:8080/TicTacToe/?disco" />
-    <MetadataFile FileName="TicTacToeService.wsdl" MetadataType="Wsdl" ID="958dfe25-3c34-4e96-a2a4-71ce0e3c3870" SourceId="1" SourceUrl="http://localhost:8080/TicTacToe/?wsdl" />
-    <MetadataFile FileName="item.wsdl" MetadataType="Wsdl" ID="19f58c2f-7375-49be-8202-356a1432ce7f" SourceId="1" SourceUrl="http://localhost:8080/TicTacToe/?wsdl=wsdl0" />
-    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="9266dd60-890b-4c1f-a87a-eeff6315301d" SourceId="1" SourceUrl="http://localhost:8080/TicTacToe/?xsd=xsd0" />
-    <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="d5bfcdb3-10e3-46c6-b878-ed39ff335dd1" SourceId="1" SourceUrl="http://localhost:8080/TicTacToe/?xsd=xsd1" />
-    <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="64d53df1-7531-45f4-99c4-6984b5647817" SourceId="1" SourceUrl="http://localhost:8080/TicTacToe/?xsd=xsd2" />
-    <MetadataFile FileName="item3.xsd" MetadataType="Schema" ID="36b30edb-b0dd-4826-84fb-96e659d3e277" SourceId="1" SourceUrl="http://localhost:8080/TicTacToe/?xsd=xsd3" />
+    <MetadataFile FileName="TicTacToe.Service.wsdl" MetadataType="Wsdl" ID="65cd7548-d456-4086-9803-922418a1243a" SourceId="1" SourceUrl="net.tcp://localhost:8080/TicTacToe/mex" />
+    <MetadataFile FileName="service.wsdl" MetadataType="Wsdl" ID="dcd0e8a4-677c-4f08-b8cf-c87f1f8e9d14" SourceId="1" SourceUrl="net.tcp://localhost:8080/TicTacToe/mex" />
+    <MetadataFile FileName="TicTacToe.Service.xsd" MetadataType="Schema" ID="aa29e8e2-f2e0-4a78-8e40-bc58b4d1637a" SourceId="1" SourceUrl="net.tcp://localhost:8080/TicTacToe/mex" />
+    <MetadataFile FileName="service.xsd" MetadataType="Schema" ID="a04780e4-73b4-4622-9414-73f032efcfac" SourceId="1" SourceUrl="net.tcp://localhost:8080/TicTacToe/mex" />
+    <MetadataFile FileName="TicTacToe.Service1.xsd" MetadataType="Schema" ID="02c6b75b-8029-4e6d-bc59-2ae9238be038" SourceId="1" SourceUrl="net.tcp://localhost:8080/TicTacToe/mex" />
+    <MetadataFile FileName="Arrays.xsd" MetadataType="Schema" ID="c9142e1d-62cd-457a-af1a-aaa4f5c5d675" SourceId="1" SourceUrl="net.tcp://localhost:8080/TicTacToe/mex" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

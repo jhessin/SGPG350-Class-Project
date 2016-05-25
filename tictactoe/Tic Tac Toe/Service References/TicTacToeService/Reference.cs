@@ -213,10 +213,10 @@ namespace Tic_Tac_Toe.TicTacToeService {
         System.Threading.Tasks.Task RegisterAsync();
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="TicTacToe.Service/TicTacToe/Mark")]
-        void Mark(int x, int y);
+        void Mark(Tic_Tac_Toe.TicTacToeService.GameMark playerMark, int x, int y);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="TicTacToe.Service/TicTacToe/Mark")]
-        System.Threading.Tasks.Task MarkAsync(int x, int y);
+        System.Threading.Tasks.Task MarkAsync(Tic_Tac_Toe.TicTacToeService.GameMark playerMark, int x, int y);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="TicTacToe.Service/TicTacToe/Reset")]
         void Reset();
@@ -229,9 +229,9 @@ namespace Tic_Tac_Toe.TicTacToeService {
     public interface TicTacToeCallback {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="TicTacToe.Service/TicTacToe/Progress")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Tic_Tac_Toe.TicTacToeService.GameMark))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Tic_Tac_Toe.TicTacToeService.GameBoard))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
         void Progress(string format, object[] args);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="TicTacToe.Service/TicTacToe/SetPlayerMark")]
@@ -283,12 +283,12 @@ namespace Tic_Tac_Toe.TicTacToeService {
             return base.Channel.RegisterAsync();
         }
         
-        public void Mark(int x, int y) {
-            base.Channel.Mark(x, y);
+        public void Mark(Tic_Tac_Toe.TicTacToeService.GameMark playerMark, int x, int y) {
+            base.Channel.Mark(playerMark, x, y);
         }
         
-        public System.Threading.Tasks.Task MarkAsync(int x, int y) {
-            return base.Channel.MarkAsync(x, y);
+        public System.Threading.Tasks.Task MarkAsync(Tic_Tac_Toe.TicTacToeService.GameMark playerMark, int x, int y) {
+            return base.Channel.MarkAsync(playerMark, x, y);
         }
         
         public void Reset() {

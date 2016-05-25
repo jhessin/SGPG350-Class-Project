@@ -19,7 +19,7 @@ using Tic_Tac_Toe.TicTacToeService;
 
 namespace Tic_Tac_Toe
 {
-	public partial class GameWindow : Form
+	public partial class GameWindow : Form, TicTacToeCallback
 	{
 		private GameBoard _board;
 		private bool _bWeHaveAWinner;
@@ -31,12 +31,20 @@ namespace Tic_Tac_Toe
 		private bool _connected;
 
 		private int _port;
+		private GameMark _playerMark = GameMark.None;
+		private GameMark _winner = GameMark.None;
+		private GameMark _turnMark = GameMark.X;
+
+		private bool _playing
+		{
+			get { return _winner == GameMark.None && _playerMark == _turnMark; }
+		}
 
 		public GameWindow()
 		{
 			InitializeComponent();
 
-			_client = new Client(UpdateProgress);
+			_client = new Client(this);
 			_port = 32;
 			btnStart.Enabled = _connected = false;
 			_board = new GameBoard();
@@ -50,18 +58,8 @@ namespace Tic_Tac_Toe
 			}
 
 			_client.Start();
+
 			btnStart.Enabled = _connected = true;
-
-			lblYourSymbol.Text = "You are: " + _client.GetMark();
-
-			if (_client.YourTurn())
-			{
-				lblYourTurn.Show();
-			}
-			else
-			{
-				lblYourTurn.Hide();
-			}
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -112,8 +110,6 @@ namespace Tic_Tac_Toe
 
 		private void Redraw()
 		{
-			_board = _client.UpdateBoard();
-
 			lblMidLeft.Text = _board.MidLeft;
 			lblMidMid.Text = _board.MidMid;
 			lblMidRight.Text = _board.MidRight;
@@ -173,24 +169,6 @@ namespace Tic_Tac_Toe
 			SendInfo(3, 3);
 		}
 
-		// this procedure checks if we have a winner. A winner is determined by 
-
-		// having three same symbols either accross the board, or on one of its sides
-
-		protected bool CheckWin()
-		{
-			//This will check to see it there is a winner with X's, O's, or a draw
-
-			switch (_client.Winner())
-			{
-				case GameMark.X:
-				case GameMark.O:
-					return true;
-				default:
-					return false;
-			}
-		}
-
 		private void Form1_Load(object sender, EventArgs e)
 		{
 			InitializeBoard();
@@ -205,69 +183,76 @@ namespace Tic_Tac_Toe
 
 		private void SendInfo(int x, int y)
 		{
-			if (_client.YourTurn())
+			if (_playing)
 			{
-				_client.Mark(x, y);
-				Redraw();
-				while (!_client.YourTurn())
-				{
-					Thread.Sleep(1000);
-				}
-
-				Redraw();
+				_client.Mark(_playerMark, x, y);
 			}
 		}
 
-		// process data received, make move displaying symbol on screen in appropriate location
-
-		private void MakeMove(string line)
-		{
-			string[] data = new string[10];
-			data = line.Split(',');
-			MarkSymbol(int.Parse(data[0]), int.Parse(data[1]));
-		}
-
-		private void MarkSymbol(int x, int y)
-		{
-			if (x == 1 && y == 1)
-				MarkOponentSymbol(lblUpperLeft);
-			else if (x == 1 && y == 2)
-				MarkOponentSymbol(lblUpperMiddle);
-			else if (x == 1 && y == 3)
-				MarkOponentSymbol(lblUpperRight);
-			else if (x == 2 && y == 1)
-				MarkOponentSymbol(lblMidLeft);
-			else if (x == 2 && y == 2)
-				MarkOponentSymbol(lblMidMid);
-			else if (x == 2 && y == 3)
-				MarkOponentSymbol(lblMidRight);
-			else if (x == 3 && y == 1)
-				MarkOponentSymbol(lblLowerLeft);
-			else if (x == 3 && y == 2)
-				MarkOponentSymbol(lblLowerMiddle);
-			else if (x == 3 && y == 3)
-				MarkOponentSymbol(lblLowerRight);
-		}
-
-		// this function is called to mark what the opponent move was. If _client O calls it, then an X is displayed on the screen
-
-		// if _client X calls it, then an O is displayed on the screen (representing what _client O move was)
-
-		private void MarkOponentSymbol(Label lbl)
-		{
-			lbl.Text = _client.GetOponentMark();
-			lbl.Enabled = false;
-			if (CheckWin())
-			{
-				_bWeHaveAWinner = true;
-			}
-		}
-
-		private void UpdateProgress(string format, params object[] args)
+		public void Progress(string format, object[] args)
 		{
 			lblMessage.Text = string.Format(format, args);
 			Trace.TraceInformation(format, args);
 		}
-		
+
+		public void SetPlayerMark(GameMark mark)
+		{
+			_playerMark = mark;
+			string strMark = "";
+
+			switch (mark)
+			{
+				case GameMark.X:
+					strMark = "X";
+					break;
+				case GameMark.O:
+					strMark = "O";
+					break;
+				default:
+					strMark = "Error";
+					break;
+			}
+			lblYourSymbol.Text = "You are: " + strMark;
+		}
+
+		public void UpdateBoard(GameBoard board)
+		{
+			_board = board;
+			Redraw();
+		}
+
+		public void SetTurn(GameMark symbol)
+		{
+			_turnMark = symbol;
+			if (_playerMark == symbol)
+			{
+				lblYourTurn.Show();
+			}
+			else
+			{
+				lblYourTurn.Hide();
+			}
+		}
+
+		public void Winner(GameMark winMark)
+		{
+			_winner = winMark;
+
+			string message;
+			switch (_winner)
+			{
+				case GameMark.X:
+					MessageBox.Show("Player X Wins!");
+					break;
+				case GameMark.O:
+					MessageBox.Show("Player O Wins!");
+					break;
+				case GameMark.Draw:
+					MessageBox.Show("The Game is a Draw. Play again?");
+					break;
+
+			}
+
+		}
 	}
 }

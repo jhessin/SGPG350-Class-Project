@@ -27,7 +27,7 @@ namespace TicTacToe.Service
 		void Register();
 
 		[OperationContract(IsOneWay = true)]
-		void Mark(int x, int y);
+		void Mark(GameMark playerMark, int x, int y);
 
 		[OperationContract(IsOneWay = true)]
 		void Reset();

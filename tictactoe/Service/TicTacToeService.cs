@@ -10,45 +10,53 @@ namespace TicTacToe.Service
 {
 	// NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "TicTacToeService" in both code and config file together.
 	[ServiceBehavior(
-		InstanceContextMode = InstanceContextMode.PerCall,
-		ConcurrencyMode = ConcurrencyMode.Multiple)]
+		InstanceContextMode = InstanceContextMode.PerSession,
+		ConcurrencyMode = ConcurrencyMode.Single)]
 	public class TicTacToeService : ITicTacToeService
 	{
 		private static GameBoard _board = new GameBoard();
-		private static Dictionary<GameMark, IServiceCallback> Callback = new Dictionary<GameMark, IServiceCallback>();
+		private static Dictionary<GameMark, IServiceCallback> _callback = new Dictionary<GameMark, IServiceCallback>();
 		private static GameMark _turn;
 		private static readonly GameMark[] Players = { GameMark.X, GameMark.O };
 		private static int _numPlayers;
-		private GameMark _playerMark = GameMark.None;
 		
 		public void Register()
 		{
-			if (!Callback.ContainsKey(GameMark.X))
+			if (_callback.ContainsValue(OperationContext.Current.GetCallbackChannel<IServiceCallback>()))
 			{
-				_playerMark = GameMark.X;
-				Callback[_playerMark] = OperationContext.Current.GetCallbackChannel<IServiceCallback>();
-				Callback[_playerMark].SetPlayerMark(_playerMark);
 				return;
 			}
-			if (!Callback.ContainsKey(GameMark.O))
+
+			GameMark playerMark;
+
+			if (!_callback.ContainsKey(GameMark.X))
 			{
-				_playerMark = GameMark.O;
-				Callback[_playerMark] = OperationContext.Current.GetCallbackChannel<IServiceCallback>();
-				Callback[_playerMark].SetPlayerMark(_playerMark);
+				playerMark = GameMark.X;
+				_callback[playerMark] = OperationContext.Current.GetCallbackChannel<IServiceCallback>();
+				_callback[playerMark].Progress("X Symbol assigned");
+				_callback[playerMark].SetPlayerMark(playerMark);
+				return;
+			}
+			if (!_callback.ContainsKey(GameMark.O))
+			{
+				playerMark = GameMark.O;
+				_callback[playerMark] = OperationContext.Current.GetCallbackChannel<IServiceCallback>();
+				_callback[playerMark].Progress("O Symbol assigned");
+				_callback[playerMark].SetPlayerMark(playerMark);
 			}
 		}
 
-		public void Mark(int x, int y)
+		public void Mark(GameMark playerMark, int x, int y)
 		{
-			if (_playerMark != _turn)
+			if (playerMark != _turn)
 			{
-				Callback[_playerMark]?.Progress("It isn't your turn");
+				_callback[playerMark]?.Progress("It isn't your turn");
 				return;
 			}
 
 			if (_board.Mark(_turn, x, y))
 			{
-				foreach (var cb in Callback.Values)
+				foreach (var cb in _callback.Values)
 				{
 					cb.UpdateBoard(_board);
 					cb.Winner(_board.Winner());
@@ -59,21 +67,10 @@ namespace TicTacToe.Service
 
 		public void Reset()
 		{
-			Callback[_playerMark]?.Progress("Reseting board");
-
-			switch (_playerMark)
-			{
-				case GameMark.X:
-					Callback[GameMark.O]?.Progress("Player X reset the board.");
-					break;
-				case GameMark.O:
-					Callback[GameMark.X]?.Progress("Player O reset the board.");
-					break;
-			}
-
 			_board.Clear();
-			foreach (var cb in Callback.Values)
+			foreach (var cb in _callback.Values)
 			{
+				cb.Progress("Board Reset requested.");
 				cb.UpdateBoard(_board);
 			}
 		}
@@ -92,7 +89,7 @@ namespace TicTacToe.Service
 			{
 				_turn = GameMark.None;
 			}
-			foreach (var cb in Callback.Values)
+			foreach (var cb in _callback.Values)
 			{
 				cb.SetTurn(_turn);
 			}

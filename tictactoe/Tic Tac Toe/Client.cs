@@ -12,9 +12,9 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Threading;
 using ServerTicTacToe;
 
@@ -29,9 +29,13 @@ namespace Tic_Tac_Toe
 //---------------------------------------------------------------------------
 	public class Client
 	{
+		// Game variables
+		public Game CurrentGame { get; private set; }
+		public GameMark PlayerSymbol { get; private set; }
+
 		// Threading variables
 		private BackgroundWorker _listener;
-		private ProgressDelegate Progress;
+		private readonly ProgressDelegate _progress;
 
 		// Network Variables
 		private TcpClient _client;
@@ -39,82 +43,139 @@ namespace Tic_Tac_Toe
 		private NetworkStream _netStream;
 		private StreamReader _reader;
 		private StreamWriter _writer;
+		public bool IsConnected { get; private set; }
+
+		public bool PlayersTurn => PlayerSymbol == CurrentGame.Turn;
 
 		public Client(ProgressDelegate callback)
 		{
-			Progress = callback;
-
-			_listener = new BackgroundWorker();
+			_progress = callback;
+			IsConnected = false;
+			_listener = new BackgroundWorker {WorkerSupportsCancellation = true};
+			_listener.DoWork += GetMessage;
+			_listener.ProgressChanged += ProcessMessage;
+			CurrentGame = new Game();
+			PlayerSymbol = GameMark.None;
 		}
 
 		public void Start(int port)
 		{
-			_listener.DoWork += Connect;
-			_listener.RunWorkerCompleted += Connected;
+			_port = port;
 
-			_listener.RunWorkerAsync(port);
+			_progress("Connecting...");
 
-			while (_listener.IsBusy)
-			{
-				Progress("Connecting...");
-			}
+			Connect();
 
-			Progress("Connected!");
-			_listener.DoWork -= Connect;
-			_listener.RunWorkerCompleted -= Connected;
+		}
 
-			_listener.DoWork += GetMessage;
-			_listener.RunWorkerCompleted += ProcessMessage;
-
+		private void Connect()
+		{
 			try
 			{
 				_client = new TcpClient();
 				_client.Connect("localhost", _port);
+				_progress("Connected");
+				IsConnected = true;
 				_netStream = _client.GetStream();
 				_reader = new StreamReader(_netStream);
-				_writer = new StreamWriter(_netStream);
 
-				_listener.RunWorkerAsync();
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				
-				throw;
+				Trace.TraceError("Error Connecting: {0}", exception.Message);
+				IsConnected = false;
 			}
 		}
 
-		private void Connect(object sender, DoWorkEventArgs e)
-		{
-			int port = (int) e.Argument;
-			TcpClient client = new TcpClient();
-			StreamReader reader = null;
-			try
-			{
-				reader = new StreamReader(client.GetStream());
-				client.Connect("localhost", port);
 
-				e.Result = reader.ReadLine();
-			}
-			finally
-			{
-				client.Close();
-				reader?.Close();
-			}
-		}
-
-		private void Connected(object sender, RunWorkerCompletedEventArgs e)
+		public void Stop()
 		{
-			_port = (int) e.Result;
+			if (IsConnected)
+			{
+				IsConnected = false;
+				_listener.CancelAsync();
+				_listener = null;
+				_reader?.Close();
+				_writer?.Close();
+				_netStream?.Close();
+				_client?.Close();
+			}
 		}
 
 		private void GetMessage(object sender, DoWorkEventArgs e)
 		{
-			throw new System.NotImplementedException();
+			while (IsConnected)
+			{
+				if (_listener.CancellationPending)
+				{
+					break;
+				}
+				try
+				{
+					_listener.ReportProgress(0, _reader.ReadLine());
+				}
+				catch (Exception exception)
+				{
+					Trace.TraceInformation(exception.Message);
+				}				// If there is a cancel request alow time for it to take effect.
+				Thread.Sleep(100);
+			}
 		}
 
-		private void ProcessMessage(object sender, RunWorkerCompletedEventArgs e)
+		private void ProcessMessage(object sender, ProgressChangedEventArgs e)
 		{
-			throw new System.NotImplementedException();
+			string msg = (string) e.UserState;
+
+			switch (msg.Substring(0, Server.COMMAND_LENGTH))
+			{
+				case Server.REDRAW:
+					CurrentGame = new Game(msg.Substring(Server.COMMAND_LENGTH));
+					_progress("Game Redraw");
+					break;
+				case Server.GET_PLAYER_SYMBOL:
+					PlayerSymbol = Game.MarkFromChar(msg.Substring(Server.COMMAND_LENGTH)[0]);
+					_progress("Updated Symbol");
+					break;
+				case Server.DISCONNECT:
+					Stop();
+					break;
+			}
+		}
+
+		private void Send(string msg)
+		{
+			if (IsConnected)
+			{
+				_writer = new StreamWriter(_netStream);
+				_writer.Write(msg);
+				_writer.Flush();
+				_writer.Close();
+				Connect();
+				StartListener();
+			}
+		}
+
+		private void StartListener()
+		{
+			if (!_listener.IsBusy)
+			{
+				_listener.RunWorkerAsync();
+			}
+		}
+
+		public void SendMark(int x, int y)
+		{
+			Send(Server.MOVE + x + ',' + y);
+		}
+
+		public void RestartRequest()
+		{
+			Send(Server.RESTART_REQUEST);
+		}
+
+		public void RequestSymbol()
+		{
+			Send(Server.GET_PLAYER_SYMBOL);
 		}
 	}
 }

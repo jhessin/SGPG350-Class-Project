@@ -10,6 +10,8 @@
 // 
 // =========================================================
 
+using System.Diagnostics;
+
 namespace ServerTicTacToe
 {
 	public enum GameMark
@@ -152,33 +154,34 @@ namespace ServerTicTacToe
 			return GameMark.None;
 		}
 
-		public static string MarkToString(params GameMark[] marks)
-		{
-			string value = "";
-			foreach (var mark in marks)
-			{
-				switch (mark)
-				{
-					case GameMark.X:
-						value += "X";
-						break;
-					case GameMark.O:
-						value += "X";
-						break;
-					default:
-						value += "_";
-						break;
-				}
-			}
-			return value;
-		}
 
 		public override string ToString()
 		{
-			return MarkToString(
+			return Game.MarkToString(
 				_topLeft, _topMid, _topRight,
 				_midLeft, _midMid, _midRight,
 				_bottomLeft, _bottomMid, _bottomRight);
+		}
+
+		public GameBoard(string fromString)
+		{
+			if (fromString.Length < 9)
+			{
+				Trace.TraceError("Invalid Gameboard string - returning empty gameboard");
+				_topLeft =_topMid = _topRight = 
+					_midLeft = _midMid = _midRight = 
+					_bottomLeft = _bottomMid = _bottomRight = GameMark.None;
+				return;
+			}
+			_topLeft = Game.MarkFromChar(fromString[0]);
+			_topMid = Game.MarkFromChar(fromString[1]);
+			_topRight = Game.MarkFromChar(fromString[2]);
+			_midLeft = Game.MarkFromChar(fromString[3]);
+			_midMid = Game.MarkFromChar(fromString[4]);
+			_midRight = Game.MarkFromChar(fromString[5]);
+			_bottomLeft = Game.MarkFromChar(fromString[6]);
+			_bottomMid = Game.MarkFromChar(fromString[7]);
+			_bottomRight = Game.MarkFromChar(fromString[8]);
 		}
 	}
 
@@ -192,6 +195,7 @@ namespace ServerTicTacToe
 	{
 		// The game board
 		private GameBoard _board;
+		public GameMark Turn { get; private set; }
 
 		public Game()
 		{
@@ -199,8 +203,40 @@ namespace ServerTicTacToe
 			Restart();
 		}
 
-		// Who's turn is it?
-		public GameMark Turn { get; private set; }
+
+		public static string MarkToString(params GameMark[] marks)
+		{
+			string value = "";
+			foreach (var mark in marks)
+			{
+				switch (mark)
+				{
+					case GameMark.X:
+						value += "X";
+						break;
+					case GameMark.O:
+						value += "O";
+						break;
+					default:
+						value += " ";
+						break;
+				}
+			}
+			return value;
+		}
+
+		public static GameMark MarkFromChar(char input)
+		{
+			switch (input)
+			{
+				case 'X':
+					return GameMark.X;
+				case 'O':
+					return GameMark.O;
+				default:
+					return GameMark.None;
+			}
+		}
 
 		public void Restart()
 		{
@@ -236,7 +272,15 @@ namespace ServerTicTacToe
 
 		public override string ToString()
 		{
-			return base.ToString();
+			return 
+				_board + 
+				Game.MarkToString(Turn) ;
+		}
+
+		public Game(string fromString)
+		{
+			_board = new GameBoard(fromString);
+			Turn = Game.MarkFromChar(fromString[9]);
 		}
 	}
 }

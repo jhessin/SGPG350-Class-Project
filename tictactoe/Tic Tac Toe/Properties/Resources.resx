@@ -114,4 +114,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="BlankSpace" xml:space="preserve">
+    <value> </value>
+  </data>
+	<data name="XMark" xml:space="preserve">
+    <value>X</value>
+  </data>
+	<data name="OMark" xml:space="preserve">
+    <value>O</value>
+  </data>
+	<data name="OWinner" xml:space="preserve">
+    <value>O is the winner!!!</value>
+  </data>
+	<data name="Winner" xml:space="preserve">
+    <value>Winner</value>
+  </data>
+	<data name="Draw" xml:space="preserve">
+    <value>Match is a draw!!!</value>
+  </data>
+	<data name="YouAre" xml:space="preserve">
+    <value>You Are: </value>
+  </data>
+	<data name="XWinner" xml:space="preserve">
+    <value>X is the winnder!!</value>
+  </data>
 </root>

@@ -62,17 +62,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
-    <Compile Include="Tic Tac Toe.cs">
+    <Compile Include="Client Window.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Tic Tac Toe.Designer.cs">
-      <DependentUpon>Tic Tac Toe.cs</DependentUpon>
+    <Compile Include="Client Window.Designer.cs">
+      <DependentUpon>Client Window.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Tic Tac Toe.resx">
+    <EmbeddedResource Include="Client Window.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Tic Tac Toe.cs</DependentUpon>
+      <DependentUpon>Client Window.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

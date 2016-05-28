@@ -59,5 +59,77 @@ namespace Tic_Tac_Toe.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  .
+        /// </summary>
+        internal static string BlankSpace {
+            get {
+                return ResourceManager.GetString("BlankSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match is a draw!!!.
+        /// </summary>
+        internal static string Draw {
+            get {
+                return ResourceManager.GetString("Draw", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O.
+        /// </summary>
+        internal static string OMark {
+            get {
+                return ResourceManager.GetString("OMark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O is the winner!!!.
+        /// </summary>
+        internal static string OWinner {
+            get {
+                return ResourceManager.GetString("OWinner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Winner.
+        /// </summary>
+        internal static string Winner {
+            get {
+                return ResourceManager.GetString("Winner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X.
+        /// </summary>
+        internal static string XMark {
+            get {
+                return ResourceManager.GetString("XMark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X is the winnder!!.
+        /// </summary>
+        internal static string XWinner {
+            get {
+                return ResourceManager.GetString("XWinner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You Are: .
+        /// </summary>
+        internal static string YouAre {
+            get {
+                return ResourceManager.GetString("YouAre", resourceCulture);
+            }
+        }
     }
 }

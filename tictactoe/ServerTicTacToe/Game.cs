@@ -127,29 +127,58 @@ namespace ServerTicTacToe
 
 		public GameMark Winner()
 		{
-			GameMark[] winMarks = new[] {GameMark.X, GameMark.O};
+			GameMark[] winMarks = {GameMark.X, GameMark.O};
 			foreach (GameMark winMark in winMarks)
 			{
 				if (_topLeft == winMark && _topMid == winMark && _topRight == winMark ||
-					_midLeft == winMark && _midMid == winMark && _midRight == winMark ||
-					_bottomLeft == winMark && _bottomMid == winMark && _bottomRight == winMark ||
-					_topLeft == winMark && _midLeft == winMark && _bottomLeft == winMark ||
-					_topMid == winMark && _midMid == winMark && _bottomMid == winMark ||
-					_topRight == winMark && _midRight == winMark && _bottomRight == winMark ||
-					_topLeft == winMark && _midMid == winMark && _bottomRight == winMark ||
-					_bottomLeft == winMark && _midMid == winMark && _topRight == winMark)
+				    _midLeft == winMark && _midMid == winMark && _midRight == winMark ||
+				    _bottomLeft == winMark && _bottomMid == winMark && _bottomRight == winMark ||
+				    _topLeft == winMark && _midLeft == winMark && _bottomLeft == winMark ||
+				    _topMid == winMark && _midMid == winMark && _bottomMid == winMark ||
+				    _topRight == winMark && _midRight == winMark && _bottomRight == winMark ||
+				    _topLeft == winMark && _midMid == winMark && _bottomRight == winMark ||
+				    _bottomLeft == winMark && _midMid == winMark && _topRight == winMark)
 				{
 					return winMark;
 				}
 			}
 			if (_topLeft != GameMark.None && _topMid != GameMark.None && _topRight != GameMark.None &&
-				_midLeft != GameMark.None && _midMid != GameMark.None && _midRight != GameMark.None &&
-				_bottomLeft != GameMark.None && _bottomMid != GameMark.None && _bottomRight != GameMark.None)
+			    _midLeft != GameMark.None && _midMid != GameMark.None && _midRight != GameMark.None &&
+			    _bottomLeft != GameMark.None && _bottomMid != GameMark.None && _bottomRight != GameMark.None)
 			{
 				return GameMark.Draw;
 			}
 
 			return GameMark.None;
+		}
+
+		public static string MarkToString(params GameMark[] marks)
+		{
+			string value = "";
+			foreach (var mark in marks)
+			{
+				switch (mark)
+				{
+					case GameMark.X:
+						value += "X";
+						break;
+					case GameMark.O:
+						value += "X";
+						break;
+					default:
+						value += "_";
+						break;
+				}
+			}
+			return value;
+		}
+
+		public override string ToString()
+		{
+			return MarkToString(
+				_topLeft, _topMid, _topRight,
+				_midLeft, _midMid, _midRight,
+				_bottomLeft, _bottomMid, _bottomRight);
 		}
 	}
 
@@ -203,6 +232,11 @@ namespace ServerTicTacToe
 					Turn = GameMark.X;
 					return;
 			}
+		}
+
+		public override string ToString()
+		{
+			return base.ToString();
 		}
 	}
 }

@@ -6,7 +6,7 @@ namespace ServerTicTacToe
 {
 	public partial class ServerWindow : Form
 	{
-		private Server _server;
+		private readonly Server _server;
 
         public ServerWindow()
         {

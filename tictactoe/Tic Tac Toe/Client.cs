@@ -51,7 +51,11 @@ namespace Tic_Tac_Toe
 		{
 			_progress = callback;
 			IsConnected = false;
-			_listener = new BackgroundWorker {WorkerSupportsCancellation = true};
+			_listener = new BackgroundWorker
+			{
+				WorkerSupportsCancellation = true,
+				WorkerReportsProgress = true
+			};
 			_listener.DoWork += GetMessage;
 			_listener.ProgressChanged += ProcessMessage;
 			CurrentGame = new Game();
@@ -72,17 +76,19 @@ namespace Tic_Tac_Toe
 		{
 			try
 			{
-				_client = new TcpClient();
-				_client.Connect("localhost", _port);
-				_progress("Connected");
-				IsConnected = true;
-				_netStream = _client.GetStream();
-				_reader = new StreamReader(_netStream);
-
+				if (_client == null)
+				{
+					_client = new TcpClient("localhost", _port);
+					_netStream = _client.GetStream();
+					_reader = new StreamReader(_netStream);
+					_writer = new StreamWriter(_netStream);
+					_progress("Connected");
+					IsConnected = true;
+				}
 			}
 			catch (Exception exception)
 			{
-				Trace.TraceError("Error Connecting: {0}", exception.Message);
+				_progress("Error Connecting: {0}", exception.Message);
 				IsConnected = false;
 			}
 		}
@@ -92,13 +98,13 @@ namespace Tic_Tac_Toe
 		{
 			if (IsConnected)
 			{
-				IsConnected = false;
-				_listener.CancelAsync();
-				_listener = null;
 				_reader?.Close();
 				_writer?.Close();
 				_netStream?.Close();
 				_client?.Close();
+				IsConnected = false;
+				_listener.CancelAsync();
+				_listener = null;
 			}
 		}
 
@@ -146,11 +152,8 @@ namespace Tic_Tac_Toe
 		{
 			if (IsConnected)
 			{
-				_writer = new StreamWriter(_netStream);
-				_writer.Write(msg);
+				_writer.WriteLine(msg);
 				_writer.Flush();
-				_writer.Close();
-				Connect();
 				StartListener();
 			}
 		}

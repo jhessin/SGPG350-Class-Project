@@ -37,13 +37,11 @@ namespace Tic_Tac_Toe
 			this.lblBottomLeft = new System.Windows.Forms.Label();
 			this.lblBottomMid = new System.Windows.Forms.Label();
 			this.lblBottomRight = new System.Windows.Forms.Label();
-			this.btnStart = new System.Windows.Forms.Button();
 			this.btnConnect = new System.Windows.Forms.Button();
 			this.lblMessage = new System.Windows.Forms.Label();
 			this.File = new System.Windows.Forms.MenuStrip();
 			this.Reset = new System.Windows.Forms.ToolStripMenuItem();
 			this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.resetGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.lblYourSymbol = new System.Windows.Forms.Label();
@@ -52,6 +50,7 @@ namespace Tic_Tac_Toe
 			this.label1 = new System.Windows.Forms.Label();
 			this.rbO = new System.Windows.Forms.RadioButton();
 			this.rbX = new System.Windows.Forms.RadioButton();
+			this.resetGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.File.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -181,18 +180,6 @@ namespace Tic_Tac_Toe
 			this.lblBottomRight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.lblBottomRight.Click += new System.EventHandler(this.lblLowerRight_Click);
 			// 
-			// btnStart
-			// 
-			this.btnStart.Enabled = false;
-			this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnStart.Location = new System.Drawing.Point(209, 397);
-			this.btnStart.Name = "btnStart";
-			this.btnStart.Size = new System.Drawing.Size(100, 35);
-			this.btnStart.TabIndex = 9;
-			this.btnStart.Text = "Restart";
-			this.btnStart.UseVisualStyleBackColor = true;
-			this.btnStart.Click += new System.EventHandler(this.Restart_Click);
-			// 
 			// btnConnect
 			// 
 			this.btnConnect.Location = new System.Drawing.Point(209, 438);
@@ -238,26 +225,19 @@ namespace Tic_Tac_Toe
 			// connectToolStripMenuItem
 			// 
 			this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-			this.connectToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+			this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.connectToolStripMenuItem.Text = "&Connect";
 			this.connectToolStripMenuItem.Click += new System.EventHandler(this.btnConnect_Click);
-			// 
-			// resetGameToolStripMenuItem
-			// 
-			this.resetGameToolStripMenuItem.Name = "resetGameToolStripMenuItem";
-			this.resetGameToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-			this.resetGameToolStripMenuItem.Text = "&Reset Game";
-			this.resetGameToolStripMenuItem.Click += new System.EventHandler(this.Restart_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(133, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.exitToolStripMenuItem.Text = "E&xit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.btnDisconnect_Click);
 			// 
@@ -323,6 +303,13 @@ namespace Tic_Tac_Toe
 			this.rbX.Text = "X";
 			this.rbX.UseVisualStyleBackColor = true;
 			// 
+			// resetGameToolStripMenuItem
+			// 
+			this.resetGameToolStripMenuItem.Name = "resetGameToolStripMenuItem";
+			this.resetGameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.resetGameToolStripMenuItem.Text = "&Reset Game";
+			this.resetGameToolStripMenuItem.Click += new System.EventHandler(this.Restart_Click);
+			// 
 			// TicTacToeWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -336,7 +323,6 @@ namespace Tic_Tac_Toe
 			this.Controls.Add(this.lblMessage);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.btnConnect);
-			this.Controls.Add(this.btnStart);
 			this.Controls.Add(this.lblBottomRight);
 			this.Controls.Add(this.lblBottomMid);
 			this.Controls.Add(this.lblBottomLeft);
@@ -370,12 +356,10 @@ namespace Tic_Tac_Toe
         private System.Windows.Forms.Label lblBottomLeft;
         private System.Windows.Forms.Label lblBottomMid;
         private System.Windows.Forms.Label lblBottomRight;
-        private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.Label lblMessage;
 		private System.Windows.Forms.MenuStrip File;
 		private System.Windows.Forms.ToolStripMenuItem Reset;
-		private System.Windows.Forms.ToolStripMenuItem resetGameToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -385,6 +369,7 @@ namespace Tic_Tac_Toe
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.RadioButton rbO;
 		private System.Windows.Forms.RadioButton rbX;
+		private System.Windows.Forms.ToolStripMenuItem resetGameToolStripMenuItem;
 	}
 }
 

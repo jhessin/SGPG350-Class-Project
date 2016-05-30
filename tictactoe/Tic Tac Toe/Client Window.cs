@@ -167,7 +167,6 @@ namespace Tic_Tac_Toe
 		private void Form1_Load(object sender, EventArgs e)
 		{
 			InitializeBoard();
-			btnStart.Enabled = false;
 		}
 
 		private void btnConnect_Click(object sender, EventArgs e)
@@ -185,7 +184,6 @@ namespace Tic_Tac_Toe
 			if (_client.IsConnected)
 			{
 				StartGame();
-				btnStart.Enabled = true;
 				btnConnect.Enabled = false;
 			}
 			else
@@ -205,7 +203,6 @@ namespace Tic_Tac_Toe
 				Thread.Sleep(1000);
 			}
 				StartGame();
-				btnStart.Enabled = true;
 				btnConnect.Enabled = false;
 		}
 
@@ -218,7 +215,6 @@ namespace Tic_Tac_Toe
 		{
 			// close all variables, including network Stream, _reader and _writer
 			_client.Stop();
-			btnStart.Enabled = false;
 			btnConnect.Enabled = true;
 			Application.Exit();
 		}
@@ -270,6 +266,7 @@ namespace Tic_Tac_Toe
 				{
 					_gameLoop.ReportProgress(0);
 				}
+				Thread.Sleep(100);
 			}
 		}
 

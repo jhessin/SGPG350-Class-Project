@@ -279,12 +279,8 @@ namespace Tic_Tac_Toe
 			UpdateBoard();
 			if (_gameOver)
 			{
-				var result = MessageBox.Show(_game.CheckWin() == _playerSymbol ? "You WIN! Play again?" : "You LOSE! Play again?","", MessageBoxButtons.YesNo);
-				if (result == DialogResult.Yes)
-				{
-					_client.RestartRequest();
-				}
-				else
+				var result = MessageBox.Show(_game.CheckWin() == _playerSymbol ? "You WIN!" : "You LOSE!","", MessageBoxButtons.OK);
+				if (result == DialogResult.OK)
 				{
 					_client.Stop();
 					Application.Exit();

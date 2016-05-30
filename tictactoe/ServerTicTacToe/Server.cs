@@ -159,7 +159,10 @@ namespace ServerTicTacToe
 
 						try
 						{
-							_sendWorkers[clientNum].RunWorkerAsync(_readers[clientNum].ReadLine());
+							if (!_sendWorkers[clientNum].IsBusy)
+							{
+								_sendWorkers[clientNum].RunWorkerAsync(_readers[clientNum].ReadLine());
+							}
 						}
 						catch (Exception)
 						{

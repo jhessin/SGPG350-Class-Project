@@ -136,6 +136,9 @@ namespace Tic_Tac_Toe
 					_listener.ReportProgress(0, _reader.ReadLine());
 					_canSend = true;
 					Thread.Sleep(100);
+					if (!_listener.CancellationPending) continue;
+					e.Cancel = true;
+					break;
 				}
 				catch (Exception exception)
 				{
@@ -146,9 +149,6 @@ namespace Tic_Tac_Toe
 					_canSend = true;
 					Thread.Sleep(100);
 				}
-				if (!_listener.CancellationPending) continue;
-				e.Cancel = true;
-				break;
 			}
 		}
 

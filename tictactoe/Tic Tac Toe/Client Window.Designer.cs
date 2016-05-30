@@ -39,8 +39,6 @@ namespace Tic_Tac_Toe
 			this.lblBottomRight = new System.Windows.Forms.Label();
 			this.btnStart = new System.Windows.Forms.Button();
 			this.btnConnect = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.txtConnectPort = new System.Windows.Forms.TextBox();
 			this.lblMessage = new System.Windows.Forms.Label();
 			this.File = new System.Windows.Forms.MenuStrip();
 			this.Reset = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,6 +49,9 @@ namespace Tic_Tac_Toe
 			this.lblYourSymbol = new System.Windows.Forms.Label();
 			this.lblYourTurn = new System.Windows.Forms.Label();
 			this._gameLoop = new System.ComponentModel.BackgroundWorker();
+			this.label1 = new System.Windows.Forms.Label();
+			this.rbO = new System.Windows.Forms.RadioButton();
+			this.rbX = new System.Windows.Forms.RadioButton();
 			this.File.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -194,31 +195,13 @@ namespace Tic_Tac_Toe
 			// 
 			// btnConnect
 			// 
-			this.btnConnect.Location = new System.Drawing.Point(233, 438);
+			this.btnConnect.Location = new System.Drawing.Point(209, 438);
 			this.btnConnect.Name = "btnConnect";
-			this.btnConnect.Size = new System.Drawing.Size(76, 35);
+			this.btnConnect.Size = new System.Drawing.Size(100, 35);
 			this.btnConnect.TabIndex = 17;
 			this.btnConnect.Text = "Connect";
 			this.btnConnect.UseVisualStyleBackColor = true;
 			this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(1, 448);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(77, 13);
-			this.label1.TabIndex = 18;
-			this.label1.Text = "Connet to port:";
-			// 
-			// txtConnectPort
-			// 
-			this.txtConnectPort.Location = new System.Drawing.Point(84, 446);
-			this.txtConnectPort.Name = "txtConnectPort";
-			this.txtConnectPort.Size = new System.Drawing.Size(43, 20);
-			this.txtConnectPort.TabIndex = 19;
-			this.txtConnectPort.Text = "33";
-			this.txtConnectPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NumbersOnly_KeyPress);
 			// 
 			// lblMessage
 			// 
@@ -309,16 +292,48 @@ namespace Tic_Tac_Toe
 			this._gameLoop.DoWork += new System.ComponentModel.DoWorkEventHandler(this.GameLoop);
 			this._gameLoop.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.GameLoopProgress);
 			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(4, 409);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(80, 13);
+			this.label1.TabIndex = 18;
+			this.label1.Text = "Desired Symbol";
+			// 
+			// rbO
+			// 
+			this.rbO.AutoSize = true;
+			this.rbO.Location = new System.Drawing.Point(52, 448);
+			this.rbO.Name = "rbO";
+			this.rbO.Size = new System.Drawing.Size(33, 17);
+			this.rbO.TabIndex = 25;
+			this.rbO.Text = "O";
+			this.rbO.UseVisualStyleBackColor = true;
+			// 
+			// rbX
+			// 
+			this.rbX.AutoSize = true;
+			this.rbX.Checked = true;
+			this.rbX.Location = new System.Drawing.Point(52, 425);
+			this.rbX.Name = "rbX";
+			this.rbX.Size = new System.Drawing.Size(32, 17);
+			this.rbX.TabIndex = 26;
+			this.rbX.TabStop = true;
+			this.rbX.Text = "X";
+			this.rbX.UseVisualStyleBackColor = true;
+			// 
 			// TicTacToeWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
 			this.ClientSize = new System.Drawing.Size(321, 516);
+			this.Controls.Add(this.rbX);
+			this.Controls.Add(this.rbO);
 			this.Controls.Add(this.lblYourTurn);
 			this.Controls.Add(this.lblYourSymbol);
 			this.Controls.Add(this.lblMessage);
-			this.Controls.Add(this.txtConnectPort);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.btnConnect);
 			this.Controls.Add(this.btnStart);
@@ -357,8 +372,6 @@ namespace Tic_Tac_Toe
         private System.Windows.Forms.Label lblBottomRight;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnConnect;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtConnectPort;
         private System.Windows.Forms.Label lblMessage;
 		private System.Windows.Forms.MenuStrip File;
 		private System.Windows.Forms.ToolStripMenuItem Reset;
@@ -369,6 +382,9 @@ namespace Tic_Tac_Toe
 		private System.Windows.Forms.Label lblYourSymbol;
 		private System.Windows.Forms.Label lblYourTurn;
 		private System.ComponentModel.BackgroundWorker _gameLoop;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.RadioButton rbO;
+		private System.Windows.Forms.RadioButton rbX;
 	}
 }
 

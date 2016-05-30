@@ -24,7 +24,7 @@ namespace Tic_Tac_Toe
 	public partial class TicTacToeWindow : Form
 	{
 		private readonly Client _client;
-		private Game _game;
+		private readonly Game _game;
 		private bool _gameOver;
 		private bool _needsUpdate;
 		private bool _playersTurn;
@@ -34,6 +34,7 @@ namespace Tic_Tac_Toe
 		{
 			InitializeComponent();
 			_client = new Client(ShowMessage);
+			_game = new Game();
 		}
 
 		private void ShowMessage(string msg, params object[] args)
@@ -69,7 +70,6 @@ namespace Tic_Tac_Toe
 		private void StartGame()
 		{
 			InitializeBoard();
-			_client.RequestSymbol();
 			if (!_gameLoop.IsBusy)
 			{
 				_gameLoop.RunWorkerAsync();
@@ -99,23 +99,23 @@ namespace Tic_Tac_Toe
 			}
 			string gameString = _game?.ToString();
 
-			lblTopLeft.Text = gameString[0].ToString();
-			lblTopMid.Text = gameString[1].ToString();
-			lblTopRight.Text = gameString[2].ToString();
-			lblMidLeft.Text = gameString[3].ToString();
-			lblMidMid.Text = gameString[4].ToString();
-			lblMidRight.Text = gameString[5].ToString();
-			lblBottomLeft.Text = gameString[6].ToString();
-			lblBottomMid.Text = gameString[7].ToString();
-			lblBottomRight.Text = gameString[8].ToString();
+			if (gameString != null)
+			{
+				lblTopLeft.Text = gameString[0].ToString();
+				lblTopMid.Text = gameString[1].ToString();
+				lblTopRight.Text = gameString[2].ToString();
+				lblMidLeft.Text = gameString[3].ToString();
+				lblMidMid.Text = gameString[4].ToString();
+				lblMidRight.Text = gameString[5].ToString();
+				lblBottomLeft.Text = gameString[6].ToString();
+				lblBottomMid.Text = gameString[7].ToString();
+				lblBottomRight.Text = gameString[8].ToString();
+			}
 		}
-
-		// returns a string symbol representing the symbol the user selected
+		
 
 		private void lblUpperLeft_Click(object sender, EventArgs e)
 		{
-			// display appropriate symbol on screen
-			UpdateBoard();
 			// send information to server here
 			SendInfo(1, 1);
 		}
@@ -123,48 +123,40 @@ namespace Tic_Tac_Toe
 		private void lblUpperMiddle_Click(object sender, EventArgs e)
 		{
 			SendInfo(1, 2);
-			UpdateBoard();
 		}
 
 		private void lblUpperRight_Click(object sender, EventArgs e)
 		{
-			UpdateBoard();
 			SendInfo(1, 3);
 		}
 
 		private void lblLeft_Click(object sender, EventArgs e)
 		{
-			UpdateBoard();
 			SendInfo(2, 1);
 		}
 
 		private void lblMiddle_Click(object sender, EventArgs e)
 		{
-			UpdateBoard();
 			SendInfo(2, 2);
 		}
 
 		private void lblRight_Click(object sender, EventArgs e)
 		{
-			UpdateBoard();
 			SendInfo(2, 3);
 		}
 
 		private void lblLowerLeft_Click(object sender, EventArgs e)
 		{
-			UpdateBoard();
 			SendInfo(3, 1);
 		}
 
 		private void lblLowerMiddle_Click(object sender, EventArgs e)
 		{
-			UpdateBoard();
 			SendInfo(3, 2);
 		}
 
 		private void lblLowerRight_Click(object sender, EventArgs e)
 		{
-			UpdateBoard();
 			SendInfo(3, 3);
 		}
 
@@ -180,22 +172,29 @@ namespace Tic_Tac_Toe
 
 		private void btnConnect_Click(object sender, EventArgs e)
 		{
-			_client.Start(int.Parse(txtConnectPort.Text));
-				Thread.Sleep(1);
+			if (_client.Start(rbX.Checked ? 0 : 1))
+			{
+				rbX.Enabled = false;
+				rbO.Enabled = false;
+			}
+			else
+			{
+				return;
+			}
+			
 			if (_client.IsConnected)
 			{
 				StartGame();
 				btnStart.Enabled = true;
 				btnConnect.Enabled = false;
-				UpdateSymbol();
 			}
 			else
 			{
 				ShowMessage("Waiting for connection");
-				BackgroundWorker WaitForConnection = new BackgroundWorker();
-				WaitForConnection.DoWork += Connected;
-				WaitForConnection.RunWorkerCompleted += ConnectNotify;
-				WaitForConnection.RunWorkerAsync();
+				BackgroundWorker waitForConnection = new BackgroundWorker();
+				waitForConnection.DoWork += Connected;
+				waitForConnection.RunWorkerCompleted += ConnectNotify;
+				waitForConnection.RunWorkerAsync();
 			}
 		}
 
@@ -208,7 +207,6 @@ namespace Tic_Tac_Toe
 				StartGame();
 				btnStart.Enabled = true;
 				btnConnect.Enabled = false;
-				UpdateSymbol();
 		}
 
 		private void ConnectNotify(object sender, RunWorkerCompletedEventArgs e)
@@ -239,15 +237,9 @@ namespace Tic_Tac_Toe
 		{
 			_client.SendMark(x, y);
 		}
-
-		private void NumbersOnly_KeyPress(object sender, KeyPressEventArgs e)
-		{
-			e.Handled = !(char.IsDigit(e.KeyChar) || e.KeyChar == '\b');
-		}
-
+		
 		private void UpdateSymbol(object sender, EventArgs e)
 		{
-			_client.RequestSymbol();
 			lblYourSymbol.Text = Resources.YouAre + Game.MarkToString(_client.PlayerSymbol);
 			if (_playersTurn)
 			{
@@ -268,9 +260,9 @@ namespace Tic_Tac_Toe
 		{
 			while (!_gameOver)
 			{
-				_needsUpdate = _game != _client.CurrentGame || _playersTurn != _client.PlayersTurn ||
+				_needsUpdate = _game.ToString() != _client.CurrentGame.ToString() || _playersTurn != _client.PlayersTurn ||
 				               _playerSymbol != _client.PlayerSymbol;
-				_game = _client.CurrentGame;
+				_game.LoadFromString(_client.CurrentGame.ToString());
 				_playerSymbol = _client.PlayerSymbol;
 				_playersTurn = _client.PlayersTurn;
 				_gameOver = _game.CheckWin() != GameMark.None;
@@ -285,6 +277,19 @@ namespace Tic_Tac_Toe
 		{
 			UpdateSymbol();
 			UpdateBoard();
+			if (_gameOver)
+			{
+				var result = MessageBox.Show(_game.CheckWin() == _playerSymbol ? "You WIN! Play again?" : "You LOSE! Play again?","", MessageBoxButtons.YesNo);
+				if (result == DialogResult.Yes)
+				{
+					_client.RestartRequest();
+				}
+				else
+				{
+					_client.Stop();
+					Application.Exit();
+				}
+			}
 		}
 	}
 }

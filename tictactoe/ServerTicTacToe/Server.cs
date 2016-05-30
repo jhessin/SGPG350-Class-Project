@@ -12,7 +12,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -38,34 +37,27 @@ namespace ServerTicTacToe
 		public const string GET_PLAYER_SYMBOL = "SMBL";
 		public const string REDRAW = "DRAW";
 
-		// Client threads
-		private readonly BackgroundWorker _c1Worker;
-		private readonly BackgroundWorker _c2Worker;
-
 		// The game itself
 		private readonly Game _game;
 		private readonly ProgressDelegate _progress;
-		private readonly GameMark _symbol1 = GameMark.X;
-		private readonly GameMark _symbol2 = GameMark.O;
+		private readonly GameMark[] _symbols = {GameMark.X, GameMark.O};
 
-		// Network Variables
-		private TcpListener _c1Listener;
-		private NetworkStream _c1NetStream;
-		private TcpListener _c2Listener;
-		private NetworkStream _c2NetStream;
-		private TcpClient _client1;
+		// Client threads
+		private readonly BackgroundWorker[] _listenWorkers = new BackgroundWorker[2];
+		private readonly BackgroundWorker[] _sendWorkers = new BackgroundWorker[2];
 
 		// Client Flags
-		private bool _client1Connected;
-		private TcpClient _client2;
-		private bool _client2Connected;
+		private readonly bool[] _canSend = {false, false};
+
+		// Network Variables
+		private readonly TcpClient[] _clients = new TcpClient[2];
+		private readonly bool[] _connected = {false, false};
 		private bool _isShuttingDown;
-		private int _port1;
-		private int _port2;
-		private StreamReader _reader1;
-		private StreamReader _reader2;
-		private StreamWriter _writer1;
-		private StreamWriter _writer2;
+		private readonly NetworkStream[] _netStreams = new NetworkStream[2];
+		private static int[] _ports = new int[2];
+		public static int[] Ports { get { return _ports; } }
+		private readonly StreamReader[] _readers = new StreamReader[2];
+		private readonly StreamWriter[] _writers = new StreamWriter[2];
 
 		public Server(ProgressDelegate callback)
 		{
@@ -74,170 +66,140 @@ namespace ServerTicTacToe
 			_progress = callback;
 			_game = new Game();
 
-			_c1Worker = new BackgroundWorker();
-			_c2Worker = new BackgroundWorker();
+			_listenWorkers[0] = new BackgroundWorker();
+			_listenWorkers[1] = new BackgroundWorker();
+			_sendWorkers[0] = new BackgroundWorker();
+			_sendWorkers[1] = new BackgroundWorker();
 
-			_c1Worker.DoWork += Listen;
-			_c2Worker.DoWork += Listen;
-			_c1Worker.ProgressChanged += ReportProgress;
-			_c2Worker.ProgressChanged += ReportProgress;
-			_c2Worker.WorkerReportsProgress =
-				_c1Worker.WorkerReportsProgress = true;
-			_c1Worker.RunWorkerCompleted += WorkerCompleted;
-			_c2Worker.RunWorkerCompleted += WorkerCompleted;
+			_listenWorkers[0].DoWork += Listen;
+			_listenWorkers[1].DoWork += Listen;
+			_listenWorkers[0].ProgressChanged += ReportProgress;
+			_listenWorkers[1].ProgressChanged += ReportProgress;
+			_listenWorkers[0].WorkerReportsProgress =
+				_listenWorkers[1].WorkerReportsProgress = true;
+			_listenWorkers[0].RunWorkerCompleted += WorkerCompleted;
+			_listenWorkers[1].RunWorkerCompleted += WorkerCompleted;
+
+			_sendWorkers[0].DoWork += ReadMessage;
+			_sendWorkers[1].DoWork += ReadMessage;
 		}
 
 		public bool Active { get; private set; }
-
-		public bool IsConnected => _client1Connected && _client2Connected;
 
 		private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 		}
 
+		// ONLY TO BE RUN ON SEND THREAD
 		private void SendToClient(int client, string msg)
 		{
-			switch (client)
+			while (true)
 			{
-				case 1:
-					_writer1.WriteLine(msg);
-					_writer1.Flush();
-					break;
-				case 2:
-					_writer2.WriteLine(msg);
-					_writer2.Flush();
-					break;
+				if (!_canSend[client]) continue;
+				_writers[client].WriteLine(msg);
+				_writers[client].Flush();
+				break;
 			}
 		}
-
-		private void SendToOther(int client, string msg)
-		{
-			SendToClient(client == 1 ? 2 : 1, msg);
-		}
-
+		
+		// ONLY TO BE RUN ON SEND THREAD
 		private void SendToAll(string msg)
 		{
-			SendToClient(1, msg);
+			SendToClient(0, msg);
 			SendToClient(1, msg);
 		}
 
-
+		// MAIN THREAD
 		private void ReportProgress(object sender, ProgressChangedEventArgs e)
 		{
 			string msg = (string) e.UserState;
 			_progress(msg);
 		}
 
-		// ---- WORKER THREAD ----
+		// ---- LISTEN THREAD ----
 		private void Listen(object sender, DoWorkEventArgs e)
 		{
 			int clientNum = (int) e.Argument;
 			ConnectToClient((BackgroundWorker) sender, e, clientNum);
 		}
 
-		// ONLY TO BE RUN ON WORKER THREAD
+		// ONLY TO BE RUN ON LISTEN THREAD
 		private void ConnectToClient(BackgroundWorker worker, DoWorkEventArgs e, int clientNum)
 		{
-			TcpListener listener;
-			TcpClient client;
-			NetworkStream netStream;
-			StreamReader reader;
-			StreamWriter writer;
-			bool firstRun = true;
 			try
 			{
-				listener = new TcpListener(IPAddress.Any, clientNum == 1 ? _port1 : _port2);
+				var listener = new TcpListener(IPAddress.Any, _ports[clientNum]);
 				listener.Start();
 				worker.ReportProgress(3, "Listening for client 1");
-				client = listener.AcceptTcpClient();
+				_clients[clientNum] = listener.AcceptTcpClient();
 
-				switch (clientNum)
-				{
-					case 1:
-						_c1Listener = listener;
-						_client1 = client;
-						break;
-					default:
-						_c2Listener = listener;
-						_client2 = client;
-						break;
-				}
-
-
-				if (client.Connected)
+				if (_clients[clientNum].Connected)
 				{
 					while (true)
 					{
-						if (clientNum == 1)
-						{
-							_client1Connected = false;
-						}
-						else
-						{
-							_client2Connected = false;
-						}
-						listener?.Stop();
-						netStream = client.GetStream();
-						writer = new StreamWriter(netStream);
-						reader = new StreamReader(netStream);
-						worker.ReportProgress(1, "Client Connected");
-						switch (clientNum)
-						{
-							case 1:
-								_c1NetStream = netStream;
-								_reader1 = reader;
-								_writer1 = writer;
-								_client1Connected = true;
-								break;
-							default:
-								_c2NetStream = netStream;
-								_reader2 = reader;
-								_writer2 = writer;
-								_client2Connected = true;
-								break;
-						}
+						_connected[clientNum] = false;
+						listener.Stop();
+						_netStreams[clientNum] = _clients[clientNum].GetStream();
+						_netStreams[clientNum].ReadTimeout = 100;
+						_writers[clientNum] = new StreamWriter(_netStreams[clientNum]);
+						_writers[clientNum].AutoFlush = true;
+						_readers[clientNum] = new StreamReader(_netStreams[clientNum]);
+
 
 						if (worker.CancellationPending)
 						{
 							e.Cancel = true;
-							reader?.Close();
-							writer?.Close();
-							netStream?.Close();
+							_readers[clientNum].Close();
+							_writers[clientNum].Close();
+							_netStreams[clientNum].Close();
 							break;
 						}
+						
+						_canSend[clientNum] = false;
 
-						// listen to information received from client 1
-						if (PlayerTurn(clientNum) || firstRun)
+						try
 						{
-							ReadMessage(clientNum, reader.ReadLine());
-							firstRun = false;
+							_sendWorkers[clientNum].RunWorkerAsync(_readers[clientNum].ReadLine());
 						}
-						else
+						catch (Exception)
 						{
+							worker.ReportProgress(1, "Client Timeout - retrying...");
+						}
+						finally
+						{
+							_canSend[clientNum] = true;
+							_writers[clientNum].WriteLine(REDRAW + _game);
+							_writers[clientNum].Flush();
 							Thread.Sleep(1000);
 						}
 					}
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
-				worker.ReportProgress(1,
-					"Problem creating client listeners.");
-				Trace.TraceError("Error: {0}", exception.Message);
+				worker.ReportProgress(1,"Problem creating client listeners.");
+//				Trace.TraceError("Error: {0}", exception.Message);
 			}
 		}
 
-		// ONLY TO BE RUN ON WORKER THREAD
-		private void ReadMessage(int clientNum, string msg)
+		// --- SEND THREAD ---
+		private void ReadMessage(object sender, DoWorkEventArgs doWorkEventArgs)
 		{
+			var clientNum = sender == _sendWorkers[0] ? 0 : 1;
+			var msg = doWorkEventArgs.Argument as string;
+			if (msg == null || msg.Length < COMMAND_LENGTH)
+			{
+				return;
+			}
+
 			// Interpret the message
-			string cmd = msg.Substring(0, COMMAND_LENGTH);
+			var cmd = msg.Substring(0, COMMAND_LENGTH);
 
 			switch (cmd)
 			{
 				case RESTART_REQUEST:
 					_game.Restart();
-					SendToOther(clientNum, REDRAW + _game);
+					SendToAll(REDRAW + _game);
 					break;
 				case GET_PLAYER_SYMBOL:
 					// Send the client's appropriate symbol.
@@ -245,12 +207,13 @@ namespace ServerTicTacToe
 					break;
 				case MOVE:
 					// Read the move string and make the appropriate adjustments to the game board.
+					if (_game.Turn != _symbols[clientNum])
+					{
+						break;
+					}
 					cmd = msg.Substring(COMMAND_LENGTH);
 					var data = cmd.Split(',');
 					_game.Mark(int.Parse(data[0]), int.Parse(data[1]));
-
-					// Send the gameboard to each client - forcing a redraw.
-					SendToAll(REDRAW + _game);
 					break;
 				case DISCONNECT:
 					_isShuttingDown = true;
@@ -260,12 +223,7 @@ namespace ServerTicTacToe
 
 		private string PlayerMark(int clientNum)
 		{
-			return Game.MarkToString(clientNum == 1 ? _symbol1 : _symbol2);
-		}
-
-		private bool PlayerTurn(int clientNum)
-		{
-			return _game.Turn == (clientNum == 1 ? _symbol1 : _symbol2);
+			return Game.MarkToString(_symbols[clientNum]);
 		}
 
 		// --- MAIN THREAD ---
@@ -275,25 +233,12 @@ namespace ServerTicTacToe
 
 			SendToClient(client, DISCONNECT);
 
-			switch (client)
-			{
-				case 1:
-					_reader1.Close();
-					_writer1.Close();
-					_c1NetStream.Close();
-					_client1.Close();
-					_client1Connected = false;
-					if (!_isShuttingDown) StartListen(client);
-					break;
-				case 2:
-					_reader2.Close();
-					_writer2.Close();
-					_c2NetStream.Close();
-					_client2.Close();
-					_client2Connected = false;
-					if (!_isShuttingDown) StartListen(client);
-					break;
-			}
+			_readers[client].Close();
+			_writers[client].Close();
+			_netStreams[client].Close();
+			_clients[client].Close();
+			_connected[client] = false;
+			if (!_isShuttingDown) StartListen(client);
 		}
 
 		public void Start(int port1, int port2)
@@ -306,48 +251,27 @@ namespace ServerTicTacToe
 			Active = true;
 			_isShuttingDown = false;
 
-			_port1 = port1;
-			_port2 = port2;
+			_ports[0] = port1;
+			_ports[1] = port2;
+			StartListen(0);
 			StartListen(1);
-			StartListen(2);
 		}
 
 		private void StartListen(int clientNum)
 		{
-			switch (clientNum)
+			if (!_listenWorkers[clientNum].IsBusy)
 			{
-				case 1:
-					if (!_c1Worker.IsBusy)
-					{
-						_c1Worker.RunWorkerAsync(clientNum);
-					}
-					break;
-				case 2:
-					if (!_c2Worker.IsBusy)
-					{
-						_c2Worker.RunWorkerAsync(clientNum);
-					}
-					break;
-				case 3:
-					if (!_c1Worker.IsBusy)
-					{
-						_c1Worker.RunWorkerAsync(clientNum);
-					}
-					if (!_c2Worker.IsBusy)
-					{
-						_c2Worker.RunWorkerAsync(clientNum);
-					}
-					break;
+				_listenWorkers[clientNum].RunWorkerAsync(clientNum);
 			}
 		}
 
 		public void Stop()
 		{
-			Active = _client1Connected = _client2Connected = false;
+			Active = _connected[0] = _connected[1] = false;
 			_isShuttingDown = true;
 			SendToAll(DISCONNECT);
+			Disconnect(0);
 			Disconnect(1);
-			Disconnect(2);
 		}
 	}
 }

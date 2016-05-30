@@ -48,83 +48,48 @@ namespace ServerTicTacToe
 					switch (y)
 					{
 						case 1:
-							if (_topLeft == GameMark.None)
-							{
-								_topLeft = symbol;
-								return true;
-							}
-							return false;
+							return CopySymbol(symbol, ref _topLeft);
 						case 2:
-							if (_midLeft == GameMark.None)
-							{
-								_midLeft = symbol;
-								return true;
-							}
-							return false;
+							return CopySymbol(symbol, ref _topMid);
 						case 3:
-							if (_bottomLeft == GameMark.None)
-							{
-								_bottomLeft = symbol;
-								return true;
-							}
-							return false;
+							return CopySymbol(symbol, ref _topRight);
 					}
 					return false;
 				case 2:
 					switch (y)
 					{
 						case 1:
-							if (_topMid == GameMark.None)
-							{
-								_topMid = symbol;
-								return true;
-							}
-							return false;
+							return CopySymbol(symbol, ref _midLeft);
 						case 2:
-							if (_midMid == GameMark.None)
-							{
-								_midMid = symbol;
-								return true;
-							}
-							return false;
+							return CopySymbol(symbol, ref _midMid);
 						case 3:
-							if (_bottomMid == GameMark.None)
-							{
-								_bottomMid = symbol;
-								return true;
-							}
-							return false;
+							return CopySymbol(symbol, ref _midRight);
 					}
 					return false;
 				case 3:
 					switch (y)
 					{
 						case 1:
-							if (_topRight == GameMark.None)
-							{
-								_topRight = symbol;
-								return true;
-							}
-							return false;
+							return CopySymbol(symbol, ref _bottomLeft);
 						case 2:
-							if (_midRight == GameMark.None)
-							{
-								_midRight = symbol;
-								return true;
-							}
-							return false;
+							return CopySymbol(symbol, ref _bottomMid);
 						case 3:
-							if (_bottomRight == GameMark.None)
-							{
-								_bottomRight = symbol;
-								return true;
-							}
-							return false;
+							return CopySymbol(symbol, ref _bottomRight);
 					}
 					return false;
 				default:
 					return false;
 			}
+		}
+
+		private bool CopySymbol(GameMark from, ref GameMark to)
+		{
+			if (to == GameMark.None)
+			{
+				to = from;
+				return true;
+			}
+			return false;
 		}
 
 		public GameMark Winner()
@@ -163,13 +128,13 @@ namespace ServerTicTacToe
 				_bottomLeft, _bottomMid, _bottomRight);
 		}
 
-		public GameBoard(string fromString)
+		public void LoadFromString(string fromString)
 		{
 			if (fromString.Length < 9)
 			{
 				Trace.TraceError("Invalid Gameboard string - returning empty gameboard");
-				_topLeft =_topMid = _topRight = 
-					_midLeft = _midMid = _midRight = 
+				_topLeft = _topMid = _topRight =
+					_midLeft = _midMid = _midRight =
 					_bottomLeft = _bottomMid = _bottomRight = GameMark.None;
 				return;
 			}
@@ -274,13 +239,13 @@ namespace ServerTicTacToe
 		{
 			return 
 				_board + 
-				Game.MarkToString(Turn) ;
+				MarkToString(Turn) ;
 		}
 
-		public Game(string fromString)
+		public void LoadFromString(string fromString)
 		{
-			_board = new GameBoard(fromString);
-			Turn = Game.MarkFromChar(fromString[9]);
+			_board.LoadFromString(fromString);
+			Turn = MarkFromChar(fromString[9]);
 		}
 	}
 }
